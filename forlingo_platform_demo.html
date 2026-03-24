@@ -1,0 +1,1323 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;500;600&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --green-dark: #1a5c3a;
+    --green-mid: #2d8a55;
+    --green-light: #5ab87a;
+    --green-pale: #e8f5ee;
+    --green-pale2: #c8e6d4;
+    --accent: #3db870;
+    --text: #1a2e25;
+    --text-muted: #5a7a68;
+    --bg: #f4faf6;
+    --card: #ffffff;
+    --border: #d0e8da;
+    --sidebar-w: 220px;
+    --header-h: 58px;
+  }
+
+  body {
+    font-family: 'Nunito Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 14px;
+  }
+
+  /* TOP NAV */
+  .top-nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: var(--header-h);
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    gap: 12px;
+    z-index: 100;
+    box-shadow: 0 1px 8px rgba(26,92,58,0.06);
+  }
+
+  .logo-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-right: 8px;
+  }
+
+  .logo-svg { width: 32px; height: 32px; }
+
+  .brand { font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 18px; color: var(--green-dark); }
+
+  .portal-tabs {
+    display: flex;
+    gap: 4px;
+    flex: 1;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .portal-tabs::-webkit-scrollbar { display: none; }
+
+  .portal-tab {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    border: 1.5px solid transparent;
+    transition: all 0.2s;
+    color: var(--text-muted);
+    background: transparent;
+  }
+  .portal-tab:hover { background: var(--green-pale); color: var(--green-dark); }
+  .portal-tab.active {
+    background: var(--green-dark);
+    color: #fff;
+    border-color: var(--green-dark);
+  }
+
+  .user-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 10px;
+    background: var(--green-pale);
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--green-dark);
+  }
+  .avatar-sm {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--green-dark);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* LAYOUT */
+  .app-layout {
+    display: flex;
+    padding-top: var(--header-h);
+    min-height: 100vh;
+  }
+
+  .sidebar {
+    width: var(--sidebar-w);
+    background: #fff;
+    border-right: 1px solid var(--border);
+    position: fixed;
+    top: var(--header-h);
+    bottom: 0;
+    left: 0;
+    overflow-y: auto;
+    padding: 16px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .sidebar-section {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    padding: 10px 8px 4px;
+    margin-top: 6px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    transition: all 0.15s;
+  }
+  .nav-item:hover { background: var(--green-pale); color: var(--green-dark); }
+  .nav-item.active { background: var(--green-pale); color: var(--green-dark); }
+  .nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    width: 3px;
+    height: 20px;
+    background: var(--green-dark);
+    border-radius: 2px;
+  }
+  .nav-item { position: relative; }
+
+  .nav-icon { font-size: 15px; width: 18px; text-align: center; }
+
+  .badge-count {
+    margin-left: auto;
+    background: var(--green-dark);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 10px;
+    min-width: 18px;
+    text-align: center;
+  }
+
+  /* MAIN */
+  .main-content {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    padding: 24px;
+    min-height: calc(100vh - var(--header-h));
+  }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* PAGE HEADER */
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .page-title { font-family: 'Nunito', sans-serif; font-size: 22px; font-weight: 800; color: var(--green-dark); }
+  .page-sub { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+
+  .btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+    font-family: 'Nunito Sans', sans-serif;
+  }
+  .btn-primary { background: var(--green-dark); color: #fff; }
+  .btn-primary:hover { background: var(--green-mid); }
+  .btn-outline { background: transparent; border: 1.5px solid var(--border); color: var(--text); }
+  .btn-outline:hover { background: var(--green-pale); }
+  .btn-sm { padding: 5px 10px; font-size: 12px; }
+  .btn-success { background: var(--accent); color: #fff; }
+
+  /* CARDS */
+  .card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  .stat-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .stat-label { font-size: 11.5px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+  .stat-value { font-family: 'Nunito', sans-serif; font-size: 28px; font-weight: 800; color: var(--green-dark); margin-top: 4px; }
+  .stat-change { font-size: 11px; color: var(--accent); font-weight: 600; margin-top: 2px; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+
+  /* TABLE */
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #f0f7f3;
+    font-size: 13px;
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--green-pale); }
+
+  /* BADGES */
+  .badge {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .badge-green { background: #d0f0dd; color: #1a5c3a; }
+  .badge-yellow { background: #fff3c4; color: #7a5c00; }
+  .badge-red { background: #fde8e8; color: #8b1a1a; }
+  .badge-blue { background: #dbeafe; color: #1e3a8a; }
+  .badge-purple { background: #ede9fe; color: #4c1d95; }
+  .badge-gray { background: #f0f0f0; color: #555; }
+  .badge-orange { background: #ffedd5; color: #9a3412; }
+
+  /* AVATAR */
+  .avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .av-green { background: var(--green-pale2); color: var(--green-dark); }
+  .av-blue { background: #dbeafe; color: #1e3a8a; }
+  .av-orange { background: #ffedd5; color: #9a3412; }
+  .av-purple { background: #ede9fe; color: #4c1d95; }
+
+  /* COURSE CARD */
+  .course-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .course-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .course-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(26,92,58,0.1); }
+  .course-thumb {
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+  }
+  .course-body { padding: 14px; }
+  .course-title { font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 14px; color: var(--green-dark); margin-bottom: 4px; }
+  .course-meta { font-size: 12px; color: var(--text-muted); }
+
+  .progress-bar-wrap { background: var(--green-pale2); border-radius: 4px; height: 6px; margin-top: 8px; overflow: hidden; }
+  .progress-bar { height: 100%; background: var(--green-dark); border-radius: 4px; }
+
+  /* LEAD CARD */
+  .leads-list { display: flex; flex-direction: column; gap: 10px; }
+  .lead-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .lead-info { flex: 1; }
+  .lead-name { font-weight: 700; font-size: 14px; color: var(--text); }
+  .lead-detail { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .lead-actions { display: flex; gap: 8px; }
+
+  /* FUNNEL */
+  .funnel-stages {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .funnel-stage {
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .funnel-label { font-weight: 700; font-size: 13px; flex: 1; }
+  .funnel-bar-wrap { flex: 2; background: rgba(255,255,255,0.5); border-radius: 4px; height: 10px; overflow: hidden; }
+  .funnel-bar { height: 100%; border-radius: 4px; }
+  .funnel-count { font-weight: 800; font-size: 15px; min-width: 40px; text-align: right; }
+
+  /* CHAT / BOT */
+  .chat-area {
+    height: 300px;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #f9fdf9;
+    scrollbar-width: thin;
+  }
+  .msg {
+    max-width: 75%;
+    padding: 9px 13px;
+    border-radius: 12px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .msg-bot { background: var(--green-pale2); color: var(--green-dark); align-self: flex-start; border-bottom-left-radius: 3px; }
+  .msg-user { background: var(--green-dark); color: #fff; align-self: flex-end; border-bottom-right-radius: 3px; }
+  .msg-system { background: #fff3c4; color: #7a5c00; align-self: center; font-size: 11px; padding: 5px 10px; border-radius: 20px; }
+
+  .chat-input-wrap {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .chat-input {
+    flex: 1;
+    padding: 9px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    outline: none;
+    font-family: 'Nunito Sans', sans-serif;
+    background: #fff;
+    color: var(--text);
+  }
+  .chat-input:focus { border-color: var(--green-mid); }
+
+  /* WHATSAPP PANEL */
+  .wa-panel {
+    background: #075e54;
+    border-radius: 12px;
+    padding: 18px;
+    color: #fff;
+  }
+  .wa-title { font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 800; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .wa-input {
+    width: 100%;
+    padding: 9px 12px;
+    border-radius: 8px;
+    border: none;
+    font-size: 13px;
+    font-family: 'Nunito Sans', sans-serif;
+    margin-bottom: 8px;
+    outline: none;
+    color: var(--text);
+  }
+  textarea.wa-input { height: 80px; resize: none; }
+  .wa-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+  .wa-tag {
+    background: rgba(255,255,255,0.15);
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11.5px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .wa-tag:hover { background: rgba(255,255,255,0.25); }
+  .wa-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-top: 14px; }
+  .wa-stat { background: rgba(255,255,255,0.1); border-radius: 8px; padding: 10px; text-align: center; }
+  .wa-stat-val { font-family: 'Nunito', sans-serif; font-size: 22px; font-weight: 800; }
+  .wa-stat-lbl { font-size: 10px; opacity: 0.75; margin-top: 2px; }
+
+  /* INVOICE */
+  .invoice-preview {
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    background: #fff;
+  }
+  .invoice-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+  .invoice-logo { font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 20px; color: var(--green-dark); }
+  .invoice-num { font-size: 12px; color: var(--text-muted); text-align: right; }
+  .invoice-table td, .invoice-table th { padding: 8px 10px; }
+  .invoice-total { display: flex; justify-content: flex-end; margin-top: 12px; }
+  .invoice-total-box { background: var(--green-pale); border-radius: 8px; padding: 12px 20px; text-align: right; }
+  .invoice-total-label { font-size: 12px; color: var(--text-muted); }
+  .invoice-total-value { font-family: 'Nunito', sans-serif; font-size: 22px; font-weight: 800; color: var(--green-dark); }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--green-pale2); border-radius: 4px; }
+
+  /* TABS */
+  .sub-tabs { display: flex; gap: 4px; margin-bottom: 18px; border-bottom: 1px solid var(--border); padding-bottom: 0; }
+  .sub-tab {
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--text-muted);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.15s;
+  }
+  .sub-tab.active { color: var(--green-dark); border-bottom-color: var(--green-dark); }
+
+  .sub-page { display: none; }
+  .sub-page.active { display: block; }
+
+  /* ROLE CARD */
+  .role-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .role-info { flex: 1; }
+  .role-name { font-weight: 700; font-size: 14px; }
+  .role-email { font-size: 12px; color: var(--text-muted); }
+  .role-badge-area { display: flex; gap: 6px; align-items: center; }
+
+  select.small-select {
+    padding: 4px 8px;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: 'Nunito Sans', sans-serif;
+    color: var(--text);
+    background: #fff;
+    cursor: pointer;
+    outline: none;
+  }
+
+  /* NOTIFICATION */
+  .notif-dot {
+    width: 7px; height: 7px;
+    background: #ef4444;
+    border-radius: 50%;
+    display: inline-block;
+    margin-left: 4px;
+  }
+
+  /* UPLOAD ZONE */
+  .upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    padding: 28px;
+    text-align: center;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.15s;
+  }
+  .upload-zone:hover { border-color: var(--green-mid); background: var(--green-pale); color: var(--green-dark); }
+
+  /* TIMELINE */
+  .timeline { display: flex; flex-direction: column; gap: 0; }
+  .timeline-item { display: flex; gap: 12px; padding-bottom: 14px; position: relative; }
+  .timeline-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--green-dark); flex-shrink: 0; margin-top: 4px; }
+  .timeline-line { position: absolute; left: 4px; top: 14px; bottom: 0; width: 2px; background: var(--green-pale2); }
+  .timeline-item:last-child .timeline-line { display: none; }
+  .timeline-text { font-size: 13px; color: var(--text-muted); }
+  .timeline-time { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+  .alert-bar {
+    background: var(--green-pale);
+    border: 1px solid var(--green-pale2);
+    border-left: 3px solid var(--green-dark);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--green-dark);
+    margin-bottom: 14px;
+  }
+</style>
+
+<div style="min-height: 100vh; display: flex; flex-direction: column;">
+
+<!-- TOP NAV -->
+<div class="top-nav">
+  <div class="logo-area">
+    <svg class="logo-svg" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="25" cy="22" rx="13" ry="13" fill="#5ab87a"/>
+      <ellipse cx="55" cy="22" rx="13" ry="13" fill="#5ab87a"/>
+      <ellipse cx="40" cy="30" rx="10" ry="10" fill="#5ab87a"/>
+      <ellipse cx="33" cy="50" rx="9" ry="9" fill="#1a5c3a"/>
+      <ellipse cx="47" cy="50" rx="9" ry="9" fill="#1a5c3a"/>
+      <ellipse cx="40" cy="62" rx="8" ry="8" fill="#1a5c3a"/>
+    </svg>
+    <span class="brand">Forlingo</span>
+  </div>
+
+  <div class="portal-tabs" id="portalTabs">
+    <div class="portal-tab active" onclick="switchPortal('student')">🎓 Student</div>
+    <div class="portal-tab" onclick="switchPortal('teacher')">📚 Teacher</div>
+    <div class="portal-tab" onclick="switchPortal('marketer')">📊 Marketer</div>
+    <div class="portal-tab" onclick="switchPortal('accounts')">💳 Accounts</div>
+    <div class="portal-tab" onclick="switchPortal('admin')">⚙️ Admin</div>
+  </div>
+
+  <div class="user-chip" id="userChip">
+    <div class="avatar-sm" id="userAvatar">SA</div>
+    <span id="userName">Sara Ahmed</span>
+    <span style="color:var(--text-muted);font-size:11px;" id="userRole">Student</span>
+  </div>
+</div>
+
+<!-- APP LAYOUT -->
+<div class="app-layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar"></div>
+
+  <!-- MAIN -->
+  <div class="main-content">
+
+    <!-- ===== STUDENT PORTAL ===== -->
+    <div class="page active" id="page-student">
+      <div class="page-header">
+        <div>
+          <div class="page-title">My Learning Hub</div>
+          <div class="page-sub">Welcome back, Sara! You're on a 7-day streak 🔥</div>
+        </div>
+        <button class="btn btn-primary">+ Enrol in Course</button>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Courses Enrolled</div>
+          <div class="stat-value">4</div>
+          <div class="stat-change">2 in progress</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Hours Learned</div>
+          <div class="stat-value">47</div>
+          <div class="stat-change">↑ 3 hrs this week</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Certificates</div>
+          <div class="stat-value">2</div>
+          <div class="stat-change">1 pending</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Score Avg.</div>
+          <div class="stat-value">84%</div>
+          <div class="stat-change">Top 15% of class</div>
+        </div>
+      </div>
+
+      <div class="alert-bar">📢 New lesson available: "Advanced Arabic Grammar – Unit 6" in your enrolled course!</div>
+
+      <div style="font-family:'Nunito',sans-serif;font-weight:700;font-size:16px;color:var(--green-dark);margin-bottom:12px;">My Courses</div>
+      <div class="course-grid">
+        <div class="course-card">
+          <div class="course-thumb" style="background:#e8f5ee;">🇬🇧</div>
+          <div class="course-body">
+            <div class="course-title">English for Business</div>
+            <div class="course-meta">32 lessons · Intermediate</div>
+            <div class="progress-bar-wrap"><div class="progress-bar" style="width:72%"></div></div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:5px;">72% complete</div>
+            <button class="btn btn-primary btn-sm" style="margin-top:10px;width:100%;">Continue →</button>
+          </div>
+        </div>
+        <div class="course-card">
+          <div class="course-thumb" style="background:#fef9e7;">🇸🇦</div>
+          <div class="course-body">
+            <div class="course-title">Formal Arabic Writing</div>
+            <div class="course-meta">28 lessons · Advanced</div>
+            <div class="progress-bar-wrap"><div class="progress-bar" style="width:45%"></div></div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:5px;">45% complete</div>
+            <button class="btn btn-primary btn-sm" style="margin-top:10px;width:100%;">Continue →</button>
+          </div>
+        </div>
+        <div class="course-card">
+          <div class="course-thumb" style="background:#eef2ff;">🇫🇷</div>
+          <div class="course-body">
+            <div class="course-title">French Fundamentals</div>
+            <div class="course-meta">20 lessons · Beginner</div>
+            <div class="progress-bar-wrap"><div class="progress-bar" style="width:100%"></div></div>
+            <div style="font-size:11px;color:var(--accent);margin-top:5px;">✓ Completed — Certificate Ready</div>
+            <button class="btn btn-outline btn-sm" style="margin-top:10px;width:100%;">Download Certificate</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-top:20px;">
+        <div class="card">
+          <div style="font-weight:700;font-size:14px;margin-bottom:12px;color:var(--green-dark);">Upcoming Live Sessions</div>
+          <div class="timeline">
+            <div class="timeline-item">
+              <div style="position:relative;"><div class="timeline-dot"></div><div class="timeline-line"></div></div>
+              <div><div style="font-weight:600;font-size:13px;">Grammar Q&A — English Business</div><div class="timeline-time">Tomorrow, 7:00 PM · Zoom</div></div>
+            </div>
+            <div class="timeline-item">
+              <div style="position:relative;"><div class="timeline-dot"></div><div class="timeline-line"></div></div>
+              <div><div style="font-weight:600;font-size:13px;">Arabic Speaking Practice</div><div class="timeline-time">Thursday, 9:00 PM · Zoom</div></div>
+            </div>
+            <div class="timeline-item">
+              <div style="position:relative;"><div class="timeline-dot"></div></div>
+              <div><div style="font-weight:600;font-size:13px;">Mock Exam Review</div><div class="timeline-time">Saturday, 6:00 PM · Zoom</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div style="font-weight:700;font-size:14px;margin-bottom:12px;color:var(--green-dark);">Recent Activity</div>
+          <div class="timeline">
+            <div class="timeline-item">
+              <div style="position:relative;"><div class="timeline-dot"></div><div class="timeline-line"></div></div>
+              <div><div class="timeline-text">Completed Quiz 5 — scored 88%</div><div class="timeline-time">2 hours ago</div></div>
+            </div>
+            <div class="timeline-item">
+              <div style="position:relative;"><div class="timeline-dot"></div><div class="timeline-line"></div></div>
+              <div><div class="timeline-text">Watched Lesson 18: Modal Verbs</div><div class="timeline-time">Yesterday</div></div>
+            </div>
+            <div class="timeline-item">
+              <div style="position:relative;"><div class="timeline-dot"></div></div>
+              <div><div class="timeline-text">Downloaded French Certificate 🎉</div><div class="timeline-time">3 days ago</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== TEACHER PORTAL ===== -->
+    <div class="page" id="page-teacher">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Teacher Studio</div>
+          <div class="page-sub">Manage your courses and students</div>
+        </div>
+        <button class="btn btn-primary" onclick="alert('Create course form would open here')">+ New Course</button>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-label">My Courses</div><div class="stat-value">6</div><div class="stat-change">3 published</div></div>
+        <div class="stat-card"><div class="stat-label">Total Students</div><div class="stat-value">312</div><div class="stat-change">↑ 24 this month</div></div>
+        <div class="stat-card"><div class="stat-label">Avg. Rating</div><div class="stat-value">4.8</div><div class="stat-change">From 142 reviews</div></div>
+        <div class="stat-card"><div class="stat-label">Completion Rate</div><div class="stat-value">71%</div><div class="stat-change">Above average</div></div>
+      </div>
+
+      <div class="sub-tabs">
+        <div class="sub-tab active" onclick="switchSubTab('teacher','courses')">My Courses</div>
+        <div class="sub-tab" onclick="switchSubTab('teacher','upload')">Upload Content</div>
+        <div class="sub-tab" onclick="switchSubTab('teacher','students')">Students</div>
+      </div>
+
+      <div class="sub-page active" id="teacher-courses">
+        <div class="card">
+          <table>
+            <thead><tr><th>Course</th><th>Students</th><th>Progress</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><div style="font-weight:600;">English for Business</div><div style="font-size:11px;color:var(--text-muted);">32 lessons</div></td>
+                <td>148</td>
+                <td><div class="progress-bar-wrap" style="width:120px;"><div class="progress-bar" style="width:85%"></div></div></td>
+                <td><span class="badge badge-green">Published</span></td>
+                <td><button class="btn btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td><div style="font-weight:600;">Formal Arabic Writing</div><div style="font-size:11px;color:var(--text-muted);">28 lessons</div></td>
+                <td>96</td>
+                <td><div class="progress-bar-wrap" style="width:120px;"><div class="progress-bar" style="width:60%"></div></div></td>
+                <td><span class="badge badge-green">Published</span></td>
+                <td><button class="btn btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td><div style="font-weight:600;">IELTS Preparation Pro</div><div style="font-size:11px;color:var(--text-muted);">45 lessons</div></td>
+                <td>—</td>
+                <td><div class="progress-bar-wrap" style="width:120px;"><div class="progress-bar" style="width:40%"></div></div></td>
+                <td><span class="badge badge-yellow">Draft</span></td>
+                <td><button class="btn btn-outline btn-sm">Edit</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="sub-page" id="teacher-upload">
+        <div class="grid-2">
+          <div class="card">
+            <div style="font-weight:700;font-size:14px;color:var(--green-dark);margin-bottom:14px;">Upload New Lesson</div>
+            <div style="margin-bottom:10px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Course</label><br><select style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:7px;margin-top:4px;font-family:'Nunito Sans',sans-serif;"><option>English for Business</option><option>Formal Arabic Writing</option><option>IELTS Preparation Pro</option></select></div>
+            <div style="margin-bottom:10px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Lesson Title</label><br><input type="text" placeholder="e.g. Module 7 – Conditionals" style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:7px;margin-top:4px;font-family:'Nunito Sans',sans-serif;outline:none;"></div>
+            <div class="upload-zone">📤 Drag & drop video or PDF<br><span style="font-size:11px;">MP4, PDF, DOCX · Max 2GB</span></div>
+            <button class="btn btn-primary" style="width:100%;margin-top:12px;">Upload Lesson</button>
+          </div>
+          <div class="card">
+            <div style="font-weight:700;font-size:14px;color:var(--green-dark);margin-bottom:14px;">Add Quiz</div>
+            <div style="margin-bottom:10px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Quiz Title</label><br><input type="text" placeholder="Quiz title..." style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:7px;margin-top:4px;font-family:'Nunito Sans',sans-serif;outline:none;"></div>
+            <div style="margin-bottom:10px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Question 1</label><br><textarea placeholder="Enter question..." style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:7px;margin-top:4px;font-family:'Nunito Sans',sans-serif;height:70px;resize:none;outline:none;"></textarea></div>
+            <button class="btn btn-outline" style="width:100%;margin-bottom:8px;">+ Add Question</button>
+            <button class="btn btn-primary" style="width:100%;">Save Quiz</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-page" id="teacher-students">
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div style="font-weight:700;font-size:14px;color:var(--green-dark);">Student List</div>
+            <input type="text" placeholder="Search students..." style="padding:7px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;outline:none;width:200px;">
+          </div>
+          <table>
+            <thead><tr><th>Student</th><th>Course</th><th>Progress</th><th>Last Active</th><th>Score</th></tr></thead>
+            <tbody>
+              <tr><td><div style="display:flex;align-items:center;gap:9px;"><div class="avatar av-green">SA</div><div><div style="font-weight:600;">Sara Ahmed</div><div style="font-size:11px;color:var(--text-muted);">sara@email.com</div></div></div></td><td>English for Business</td><td>72%</td><td>Today</td><td>84%</td></tr>
+              <tr><td><div style="display:flex;align-items:center;gap:9px;"><div class="avatar av-blue">MK</div><div><div style="font-weight:600;">Mohammed Khalid</div><div style="font-size:11px;color:var(--text-muted);">mk@email.com</div></div></div></td><td>Formal Arabic</td><td>45%</td><td>Yesterday</td><td>77%</td></tr>
+              <tr><td><div style="display:flex;align-items:center;gap:9px;"><div class="avatar av-orange">LT</div><div><div style="font-weight:600;">Layla Tarek</div><div style="font-size:11px;color:var(--text-muted);">lt@email.com</div></div></div></td><td>IELTS Prep</td><td>91%</td><td>2 days ago</td><td>92%</td></tr>
+              <tr><td><div style="display:flex;align-items:center;gap:9px;"><div class="avatar av-purple">AR</div><div><div style="font-weight:600;">Ahmed Rashid</div><div style="font-size:11px;color:var(--text-muted);">ar@email.com</div></div></div></td><td>English for Business</td><td>33%</td><td>5 days ago</td><td>61%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== MARKETER PORTAL ===== -->
+    <div class="page" id="page-marketer">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Lead Management</div>
+          <div class="page-sub">Full funnel CRM + WhatsApp Automation</div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-outline" onclick="switchSubTab('marketer','bulk')">📤 Bulk Message</button>
+          <button class="btn btn-primary" onclick="switchSubTab('marketer','bot')">🤖 Bot Settings</button>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-label">Total Leads</div><div class="stat-value">287</div><div class="stat-change">↑ 34 this week</div></div>
+        <div class="stat-card"><div class="stat-label">Hot Leads</div><div class="stat-value">42</div><div class="stat-change">Need follow-up</div></div>
+        <div class="stat-card"><div class="stat-label">Converted</div><div class="stat-value">89</div><div class="stat-change">31% conv. rate</div></div>
+        <div class="stat-card"><div class="stat-label">WhatsApp Sent</div><div class="stat-value">1.2K</div><div class="stat-change">94% delivered</div></div>
+      </div>
+
+      <div class="sub-tabs">
+        <div class="sub-tab active" onclick="switchSubTab('marketer','leads')">All Leads</div>
+        <div class="sub-tab" onclick="switchSubTab('marketer','funnel')">Funnel View</div>
+        <div class="sub-tab" onclick="switchSubTab('marketer','bot')">Bot Automation</div>
+        <div class="sub-tab" onclick="switchSubTab('marketer','bulk')">Bulk Message</div>
+      </div>
+
+      <div class="sub-page active" id="marketer-leads">
+        <div class="card" style="margin-bottom:14px;">
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <input type="text" placeholder="Search leads..." style="padding:7px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;outline:none;flex:1;min-width:160px;">
+            <select class="small-select"><option>All Status</option><option>New</option><option>Hot</option><option>Cold</option><option>Converted</option></select>
+            <select class="small-select"><option>All Courses</option><option>English</option><option>Arabic</option><option>IELTS</option></select>
+          </div>
+        </div>
+        <div class="leads-list">
+          <div class="lead-card">
+            <div class="avatar av-green">FH</div>
+            <div class="lead-info">
+              <div class="lead-name">Fatima Hassan</div>
+              <div class="lead-detail">📱 +966 55 123 4567 · Interested: IELTS Prep · Source: Instagram Ad</div>
+              <div style="margin-top:6px;display:flex;gap:6px;align-items:center;">
+                <span class="badge badge-red">🔥 Hot</span>
+                <span style="font-size:11px;color:var(--text-muted);">Bot score: 87/100 · Last contact: 2h ago</span>
+              </div>
+            </div>
+            <div class="lead-actions">
+              <button class="btn btn-success btn-sm">💬 WhatsApp</button>
+              <button class="btn btn-outline btn-sm">View</button>
+            </div>
+          </div>
+          <div class="lead-card">
+            <div class="avatar av-blue">YA</div>
+            <div class="lead-info">
+              <div class="lead-name">Yousef Al-Rashidi</div>
+              <div class="lead-detail">📱 +966 50 987 6543 · Interested: English Business · Source: Google Ad</div>
+              <div style="margin-top:6px;display:flex;gap:6px;align-items:center;">
+                <span class="badge badge-yellow">⚡ Warm</span>
+                <span style="font-size:11px;color:var(--text-muted);">Bot score: 65/100 · Last contact: 1d ago</span>
+              </div>
+            </div>
+            <div class="lead-actions">
+              <button class="btn btn-success btn-sm">💬 WhatsApp</button>
+              <button class="btn btn-outline btn-sm">View</button>
+            </div>
+          </div>
+          <div class="lead-card">
+            <div class="avatar av-orange">NM</div>
+            <div class="lead-info">
+              <div class="lead-name">Nora Mohammed</div>
+              <div class="lead-detail">📱 +966 56 234 5678 · Interested: Arabic Writing · Source: Facebook Ad</div>
+              <div style="margin-top:6px;display:flex;gap:6px;align-items:center;">
+                <span class="badge badge-green">✅ Converted</span>
+                <span style="font-size:11px;color:var(--text-muted);">Enrolled: Formal Arabic · Payment received</span>
+              </div>
+            </div>
+            <div class="lead-actions">
+              <button class="btn btn-outline btn-sm">View</button>
+            </div>
+          </div>
+          <div class="lead-card">
+            <div class="avatar av-purple">KS</div>
+            <div class="lead-info">
+              <div class="lead-name">Khalid Saleh</div>
+              <div class="lead-detail">📱 +966 59 876 5432 · Interested: IELTS Prep · Source: WhatsApp Campaign</div>
+              <div style="margin-top:6px;display:flex;gap:6px;align-items:center;">
+                <span class="badge badge-gray">❄️ Cold</span>
+                <span style="font-size:11px;color:var(--text-muted);">Bot score: 23/100 · No reply in 5 days</span>
+              </div>
+            </div>
+            <div class="lead-actions">
+              <button class="btn btn-success btn-sm">💬 Re-engage</button>
+              <button class="btn btn-outline btn-sm">View</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-page" id="marketer-funnel">
+        <div class="grid-2">
+          <div class="card">
+            <div style="font-weight:700;font-size:14px;color:var(--green-dark);margin-bottom:14px;">Lead Funnel</div>
+            <div class="funnel-stages">
+              <div class="funnel-stage" style="background:#dbeafe;"><span style="font-size:14px;">📥</span><div class="funnel-label" style="color:#1e3a8a;">New Leads</div><div class="funnel-bar-wrap"><div class="funnel-bar" style="width:100%;background:#1e3a8a;"></div></div><div class="funnel-count" style="color:#1e3a8a;">287</div></div>
+              <div class="funnel-stage" style="background:#fef9e7;"><span style="font-size:14px;">🤖</span><div class="funnel-label" style="color:#7a5c00;">Bot Qualified</div><div class="funnel-bar-wrap"><div class="funnel-bar" style="width:72%;background:#7a5c00;"></div></div><div class="funnel-count" style="color:#7a5c00;">206</div></div>
+              <div class="funnel-stage" style="background:#ffedd5;"><span style="font-size:14px;">🔥</span><div class="funnel-label" style="color:#9a3412;">Hot Leads</div><div class="funnel-bar-wrap"><div class="funnel-bar" style="width:38%;background:#9a3412;"></div></div><div class="funnel-count" style="color:#9a3412;">42</div></div>
+              <div class="funnel-stage" style="background:#fde8e8;"><span style="font-size:14px;">💬</span><div class="funnel-label" style="color:#8b1a1a;">Marketer Follow-up</div><div class="funnel-bar-wrap"><div class="funnel-bar" style="width:28%;background:#8b1a1a;"></div></div><div class="funnel-count" style="color:#8b1a1a;">31</div></div>
+              <div class="funnel-stage" style="background:#d0f0dd;"><span style="font-size:14px;">✅</span><div class="funnel-label" style="color:#1a5c3a;">Converted</div><div class="funnel-bar-wrap"><div class="funnel-bar" style="width:31%;background:#1a5c3a;"></div></div><div class="funnel-count" style="color:#1a5c3a;">89</div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div style="font-weight:700;font-size:14px;color:var(--green-dark);margin-bottom:14px;">Lead Sources</div>
+            <table>
+              <thead><tr><th>Source</th><th>Leads</th><th>Conv. Rate</th></tr></thead>
+              <tbody>
+                <tr><td>📷 Instagram Ads</td><td>112</td><td><span class="badge badge-green">38%</span></td></tr>
+                <tr><td>🔵 Facebook Ads</td><td>87</td><td><span class="badge badge-yellow">29%</span></td></tr>
+                <tr><td>🔍 Google Ads</td><td>54</td><td><span class="badge badge-green">41%</span></td></tr>
+                <tr><td>💬 WhatsApp Campaign</td><td>34</td><td><span class="badge badge-green">35%</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-page" id="marketer-bot">
+        <div class="grid-2">
+          <div class="card">
+            <div style="font-weight:700;font-size:14px;color:var(--green-dark);margin-bottom:4px;">🤖 Bot Conversation Simulator</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">How the bot qualifies leads automatically</div>
+            <div class="chat-area" id="botChat">
+              <div class="msg msg-bot">👋 Ahlan! I'm Lingo, the Forlingo assistant. Which course are you interested in?</div>
+              <div class="msg msg-user">I want to learn English</div>
+              <div class="msg msg-bot">Great choice! We have Business English and IELTS Prep. Which fits your goal? 🎯</div>
+              <div class="msg msg-user">IELTS, I need 7.0 band</div>
+              <div class="msg msg-bot">Excellent! What's your current English level? (Beginner / Intermediate / Advanced)</div>
+              <div class="msg msg-user">Intermediate</div>
+              <div class="msg msg-system">🤖 Bot Score: 78/100 — Classifying as HOT LEAD</div>
+              <div class="msg msg-bot">Perfect! Our IELTS Prep Pro course is ideal for you. Price is SAR 1,499. Can I share payment details?</div>
+            </div>
+            <div class="chat-input-wrap">
+              <input class="chat-input" id="botInput" placeholder="Type a reply as a lead..." onkeydown="if(event.key==='Enter')sendBotMsg()">
+              <button class="btn btn-primary btn-sm" onclick="sendBotMsg()">Send</button>
+            </div>
+          </div>
+          <div class="card">
+            <div style="font-weight:700;font-size:14px;color:var(--green-dark);margin-bottom:14px;">Bot Configuration</div>
+            <div style="margin-bottom:12px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Qualification Questions</label>
+              <div style="margin-top:6px;display:flex;flex-direction:column;gap:6px;">
+                <div style="padding:8px;background:var(--green-pale);border-radius:7px;font-size:12px;">1. Which course are you interested in?</div>
+                <div style="padding:8px;background:var(--green-pale);border-radius:7px;font-size:12px;">2. What is your current level?</div>
+                <div style="padding:8px;background:var(--green-pale);border-radius:7px;font-size:12px;">3. What is your target score / goal?</div>
+                <div style="padding:8px;background:var(--green-pale);border-radius:7px;font-size:12px;">4. When are you looking to start?</div>
+                <div style="padding:8px;background:var(--green-pale);border-radius:7px;font-size:12px;">5. What is your budget range?</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <div style="flex:1;min-width:120px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Hot threshold</label><br><input type="number" value="70" style="width:100%;padding:7px;border:1.5px solid var(--border);border-radius:7px;margin-top:4px;font-family:'Nunito Sans',sans-serif;outline:none;"></div>
+              <div style="flex:1;min-width:120px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Cold threshold</label><br><input type="number" value="30" style="width:100%;padding:7px;border:1.5px solid var(--border);border-radius:7px;margin-top:4px;font-family:'Nunito Sans',sans-serif;outline:none;"></div>
+            </div>
+            <button class="btn btn-primary" style="width:100%;margin-top:12px;">Save Bot Settings</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-page" id="marketer-bulk">
+        <div class="wa-panel">
+          <div class="wa-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.117 1.528 5.853L0 24l6.337-1.515A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.885 0-3.652-.491-5.183-1.352L3 22l1.382-3.707A9.958 9.958 0 012 12c0-5.514 4.486-10 10-10s10 4.486 10 10-4.486 10-10 10z"/></svg>
+            WhatsApp Bulk Messaging
+          </div>
+          <select class="wa-input" style="color:#333;">
+            <option>All Students (312)</option>
+            <option>Hot Leads (42)</option>
+            <option>Cold Leads (98)</option>
+            <option>Enrolled – English (148)</option>
+            <option>Enrolled – Arabic (96)</option>
+            <option>Custom Segment</option>
+          </select>
+          <textarea class="wa-input" placeholder="Type your message here... Use {{name}} for personalization, {{course}} for course name"></textarea>
+          <div style="font-size:12px;opacity:0.8;margin-bottom:8px;">Quick templates:</div>
+          <div class="wa-tags">
+            <div class="wa-tag" onclick="insertTemplate('reminder')">📅 Class Reminder</div>
+            <div class="wa-tag" onclick="insertTemplate('offer')">🎁 Special Offer</div>
+            <div class="wa-tag" onclick="insertTemplate('followup')">💬 Follow-up</div>
+            <div class="wa-tag" onclick="insertTemplate('cert')">🏆 Certificate Ready</div>
+          </div>
+          <button class="btn btn-primary" style="width:100%;background:#25d366;border:none;font-size:14px;" onclick="alert('Message scheduled for 312 recipients!')">Send Bulk Message →</button>
+          <div class="wa-stats">
+            <div class="wa-stat"><div class="wa-stat-val">1,247</div><div class="wa-stat-lbl">Sent this month</div></div>
+            <div class="wa-stat"><div class="wa-stat-val">94%</div><div class="wa-stat-lbl">Delivery rate</div></div>
+            <div class="wa-stat"><div class="wa-stat-val">67%</div><div class="wa-stat-lbl">Open rate</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ACCOUNTS PORTAL ===== -->
+    <div class="page" id="page-accounts">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Accounts & Finance</div>
+          <div class="page-sub">Invoices, payments, and revenue tracking</div>
+        </div>
+        <button class="btn btn-primary" onclick="switchSubTab('accounts','new-invoice')">+ New Invoice</button>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-label">Revenue (March)</div><div class="stat-value">SAR 84K</div><div class="stat-change">↑ 18% vs Feb</div></div>
+        <div class="stat-card"><div class="stat-label">Invoices Sent</div><div class="stat-value">134</div><div class="stat-change">12 pending</div></div>
+        <div class="stat-card"><div class="stat-label">Overdue</div><div class="stat-value">7</div><div class="stat-change" style="color:#ef4444;">SAR 9,200 at risk</div></div>
+        <div class="stat-card"><div class="stat-label">Collected</div><div class="stat-value">SAR 74K</div><div class="stat-change">88% collection rate</div></div>
+      </div>
+
+      <div class="sub-tabs">
+        <div class="sub-tab active" onclick="switchSubTab('accounts','invoices')">Invoices</div>
+        <div class="sub-tab" onclick="switchSubTab('accounts','new-invoice')">Create Invoice</div>
+      </div>
+
+      <div class="sub-page active" id="accounts-invoices">
+        <div class="card">
+          <table>
+            <thead><tr><th>Invoice #</th><th>Student</th><th>Course</th><th>Amount</th><th>Date</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:700;color:var(--green-dark);">#INV-2024</td><td>Sara Ahmed</td><td>English Business</td><td>SAR 1,499</td><td>Mar 20</td><td><span class="badge badge-green">Paid</span></td><td><button class="btn btn-outline btn-sm">📄 PDF</button></td></tr>
+              <tr><td style="font-weight:700;color:var(--green-dark);">#INV-2023</td><td>Yousef Al-Rashidi</td><td>IELTS Prep</td><td>SAR 1,899</td><td>Mar 18</td><td><span class="badge badge-yellow">Pending</span></td><td><button class="btn btn-outline btn-sm">📧 Remind</button></td></tr>
+              <tr><td style="font-weight:700;color:var(--green-dark);">#INV-2022</td><td>Layla Tarek</td><td>Arabic Writing</td><td>SAR 999</td><td>Mar 15</td><td><span class="badge badge-green">Paid</span></td><td><button class="btn btn-outline btn-sm">📄 PDF</button></td></tr>
+              <tr><td style="font-weight:700;color:var(--green-dark);">#INV-2021</td><td>Ahmed Rashid</td><td>English Business</td><td>SAR 1,499</td><td>Mar 10</td><td><span class="badge badge-red">Overdue</span></td><td><button class="btn btn-primary btn-sm">💬 WA Remind</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="sub-page" id="accounts-new-invoice">
+        <div class="grid-2">
+          <div class="invoice-preview">
+            <div class="invoice-header">
+              <div>
+                <div class="invoice-logo">Forlingo</div>
+                <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">forlingo.academy</div>
+              </div>
+              <div class="invoice-num">
+                <div style="font-weight:700;font-size:16px;color:var(--green-dark);">INVOICE</div>
+                <div style="font-size:12px;color:var(--text-muted);">#INV-2025</div>
+                <div style="font-size:12px;color:var(--text-muted);">March 25, 2026</div>
+              </div>
+            </div>
+            <div style="margin-bottom:16px;">
+              <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px;">BILL TO</div>
+              <div style="font-weight:700;">Student Name</div>
+              <div style="font-size:13px;color:var(--text-muted);">student@email.com</div>
+            </div>
+            <table class="invoice-table" style="width:100%;">
+              <thead><tr style="background:var(--green-pale);"><th style="padding:8px;">Description</th><th style="padding:8px;text-align:right;">Amount</th></tr></thead>
+              <tbody>
+                <tr><td style="padding:8px;">IELTS Preparation Pro Course</td><td style="padding:8px;text-align:right;font-weight:600;">SAR 1,899</td></tr>
+                <tr><td style="padding:8px;color:var(--text-muted);font-size:12px;">Full access · 3 months</td><td></td></tr>
+              </tbody>
+            </table>
+            <div class="invoice-total">
+              <div class="invoice-total-box">
+                <div class="invoice-total-label">Total Due</div>
+                <div class="invoice-total-value">SAR 1,899</div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div style="font-weight:700;font-size:14px;color:var(--green-dark);margin-bottom:14px;">Create Invoice</div>
+            <div style="margin-bottom:10px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Student</label><br><select style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:7px;margin-top:4px;font-family:'Nunito Sans',sans-serif;"><option>Sara Ahmed</option><option>Yousef Al-Rashidi</option><option>Layla Tarek</option></select></div>
+            <div style="margin-bottom:10px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Course</label><br><select style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:7px;margin-top:4px;font-family:'Nunito Sans',sans-serif;"><option>English for Business — SAR 1,499</option><option>IELTS Prep Pro — SAR 1,899</option><option>Formal Arabic Writing — SAR 999</option></select></div>
+            <div style="margin-bottom:10px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Discount (%)</label><br><input type="number" value="0" min="0" max="100" style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:7px;margin-top:4px;font-family:'Nunito Sans',sans-serif;outline:none;"></div>
+            <div style="display:flex;gap:8px;margin-top:14px;">
+              <button class="btn btn-outline" style="flex:1;">📧 Send Email</button>
+              <button class="btn btn-success" style="flex:1;">💬 Send via WA</button>
+            </div>
+            <button class="btn btn-primary" style="width:100%;margin-top:8px;">🖨️ Generate PDF Invoice</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ADMIN PORTAL ===== -->
+    <div class="page" id="page-admin">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Admin Control Center</div>
+          <div class="page-sub">Manage users, roles, and platform settings</div>
+        </div>
+        <button class="btn btn-primary">+ Invite User</button>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-label">Total Users</div><div class="stat-value">387</div><div class="stat-change">↑ 29 this month</div></div>
+        <div class="stat-card"><div class="stat-label">Active Students</div><div class="stat-value">312</div></div>
+        <div class="stat-card"><div class="stat-label">Teachers</div><div class="stat-value">8</div></div>
+        <div class="stat-card"><div class="stat-label">Staff</div><div class="stat-value">14</div><div class="stat-change">Marketers, Accounts, Admins</div></div>
+      </div>
+
+      <div class="alert-bar">⚠️ 3 new users are pending role assignment — default: Student. Review below.</div>
+
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div style="font-weight:700;font-size:14px;color:var(--green-dark);">User Role Management</div>
+          <input type="text" placeholder="Search users..." style="padding:7px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;outline:none;width:200px;">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;" id="userRoleList">
+          <div class="role-card">
+            <div class="avatar av-green">SA</div>
+            <div class="role-info"><div class="role-name">Sara Ahmed</div><div class="role-email">sara@email.com · Joined Mar 2026</div></div>
+            <div class="role-badge-area">
+              <select class="small-select" onchange="updateRole(this,'SA')"><option selected>Student</option><option>Teacher</option><option>Marketer</option><option>Accounts</option><option>Admin</option></select>
+              <button class="btn btn-outline btn-sm">Save</button>
+            </div>
+          </div>
+          <div class="role-card">
+            <div class="avatar av-blue">MK</div>
+            <div class="role-info"><div class="role-name">Mohammed Khalid</div><div class="role-email">mk@email.com · Joined Feb 2026</div></div>
+            <div class="role-badge-area">
+              <select class="small-select"><option>Student</option><option selected>Teacher</option><option>Marketer</option><option>Accounts</option><option>Admin</option></select>
+              <button class="btn btn-outline btn-sm">Save</button>
+            </div>
+          </div>
+          <div class="role-card">
+            <div class="avatar av-orange">LT</div>
+            <div class="role-info"><div class="role-name">Layla Tarek</div><div class="role-email">lt@email.com · Joined Jan 2026</div></div>
+            <div class="role-badge-area">
+              <select class="small-select"><option>Student</option><option>Teacher</option><option selected>Marketer</option><option>Accounts</option><option>Admin</option></select>
+              <button class="btn btn-outline btn-sm">Save</button>
+            </div>
+          </div>
+          <div class="role-card" style="border:1.5px solid #fbbf24;">
+            <div class="avatar" style="background:#fff3c4;color:#7a5c00;">NR</div>
+            <div class="role-info"><div class="role-name">Nada Rashed <span class="badge badge-yellow" style="font-size:10px;margin-left:6px;">New</span></div><div class="role-email">nada@email.com · Joined Today — Pending role</div></div>
+            <div class="role-badge-area">
+              <select class="small-select"><option selected>Student</option><option>Teacher</option><option>Marketer</option><option>Accounts</option><option>Admin</option></select>
+              <button class="btn btn-primary btn-sm">Assign</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-top:16px;">
+        <div class="card">
+          <div style="font-weight:700;font-size:14px;color:var(--green-dark);margin-bottom:12px;">Platform Activity (Today)</div>
+          <table>
+            <thead><tr><th>Event</th><th>Count</th></tr></thead>
+            <tbody>
+              <tr><td>Lessons watched</td><td style="font-weight:700;">142</td></tr>
+              <tr><td>Quizzes completed</td><td style="font-weight:700;">38</td></tr>
+              <tr><td>New leads captured</td><td style="font-weight:700;">14</td></tr>
+              <tr><td>Invoices sent</td><td style="font-weight:700;">6</td></tr>
+              <tr><td>Certificates issued</td><td style="font-weight:700;">3</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <div style="font-weight:700;font-size:14px;color:var(--green-dark);margin-bottom:12px;">Role Distribution</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;"><span>Students</span><span style="font-weight:700;">312</span></div><div class="progress-bar-wrap"><div class="progress-bar" style="width:80%;"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;"><span>Teachers</span><span style="font-weight:700;">8</span></div><div class="progress-bar-wrap"><div class="progress-bar" style="width:2%;"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;"><span>Marketers</span><span style="font-weight:700;">5</span></div><div class="progress-bar-wrap"><div class="progress-bar" style="width:1.5%;"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;"><span>Accounts</span><span style="font-weight:700;">3</span></div><div class="progress-bar-wrap"><div class="progress-bar" style="width:1%;"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;"><span>Admins</span><span style="font-weight:700;">2</span></div><div class="progress-bar-wrap"><div class="progress-bar" style="width:0.5%;"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end main-content -->
+</div><!-- end app-layout -->
+</div>
+
+<script>
+const portals = {
+  student: {
+    user: 'Sara Ahmed', initials: 'SA', role: 'Student',
+    nav: [
+      {section:'LEARNING'},
+      {icon:'🏠', label:'Dashboard', id:'dash'},
+      {icon:'📖', label:'My Courses', id:'courses'},
+      {icon:'📅', label:'Live Sessions', id:'live'},
+      {icon:'🏆', label:'Certificates', id:'certs'},
+      {section:'ACCOUNT'},
+      {icon:'👤', label:'My Profile', id:'profile'},
+      {icon:'💳', label:'Payments', id:'pay'},
+    ]
+  },
+  teacher: {
+    user: 'Dr. Mohammed K.', initials: 'MK', role: 'Teacher',
+    nav: [
+      {section:'STUDIO'},
+      {icon:'📊', label:'Overview', id:'overview'},
+      {icon:'📚', label:'My Courses', id:'my-courses'},
+      {icon:'⬆️', label:'Upload Content', id:'upload'},
+      {icon:'👥', label:'Students', id:'stu'},
+      {icon:'📝', label:'Assignments', id:'assignments'},
+      {section:'ANALYTICS'},
+      {icon:'📈', label:'Performance', id:'perf'},
+    ]
+  },
+  marketer: {
+    user: 'Layla Tarek', initials: 'LT', role: 'Marketer',
+    nav: [
+      {section:'CRM'},
+      {icon:'🏠', label:'Dashboard', id:'crm-dash'},
+      {icon:'👥', label:'All Leads', id:'all-leads'},
+      {icon:'📊', label:'Funnel View', id:'funnel'},
+      {section:'MESSAGING'},
+      {icon:'🤖', label:'Bot Automation', id:'bot'},
+      {icon:'📤', label:'Bulk Message', id:'bulk'},
+      {icon:'⏰', label:'Scheduled', id:'sched'},
+    ]
+  },
+  accounts: {
+    user: 'Hana Al-Sayed', initials: 'HA', role: 'Accounts',
+    nav: [
+      {section:'FINANCE'},
+      {icon:'💰', label:'Revenue', id:'rev'},
+      {icon:'📄', label:'Invoices', id:'invs'},
+      {icon:'✏️', label:'Create Invoice', id:'new-inv'},
+      {icon:'⚠️', label:'Overdue', id:'overdue', badge:'7'},
+      {section:'REPORTS'},
+      {icon:'📈', label:'Monthly Report', id:'monthly'},
+    ]
+  },
+  admin: {
+    user: 'Admin User', initials: 'AU', role: 'Admin',
+    nav: [
+      {section:'PLATFORM'},
+      {icon:'📊', label:'Overview', id:'platform'},
+      {icon:'👥', label:'User Roles', id:'roles'},
+      {icon:'🎓', label:'Courses', id:'all-courses'},
+      {section:'SYSTEM'},
+      {icon:'⚙️', label:'Settings', id:'settings'},
+      {icon:'🔗', label:'Integrations', id:'integrations'},
+      {icon:'📋', label:'Activity Log', id:'log'},
+    ]
+  }
+};
+
+let currentPortal = 'student';
+
+function switchPortal(portal) {
+  currentPortal = portal;
+  document.querySelectorAll('.portal-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + portal).classList.add('active');
+  const p = portals[portal];
+  document.getElementById('userName').textContent = p.user;
+  document.getElementById('userRole').textContent = p.role;
+  document.getElementById('userAvatar').textContent = p.initials;
+  buildSidebar(portal);
+}
+
+function buildSidebar(portal) {
+  const sb = document.getElementById('sidebar');
+  const nav = portals[portal].nav;
+  sb.innerHTML = '';
+  nav.forEach(item => {
+    if (item.section) {
+      const s = document.createElement('div');
+      s.className = 'sidebar-section';
+      s.textContent = item.section;
+      sb.appendChild(s);
+    } else {
+      const d = document.createElement('div');
+      d.className = 'nav-item' + (item.id === nav.find(x=>!x.section)?.id ? ' active' : '');
+      d.innerHTML = `<span class="nav-icon">${item.icon}</span>${item.label}${item.badge ? `<span class="badge-count">${item.badge}</span>` : ''}`;
+      d.onclick = function() {
+        document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
+        this.classList.add('active');
+      };
+      sb.appendChild(d);
+    }
+  });
+}
+
+function switchSubTab(portal, tab) {
+  const pages = document.querySelectorAll('#page-' + portal + ' .sub-page');
+  pages.forEach(p => p.classList.remove('active'));
+  const target = document.getElementById(portal + '-' + tab);
+  if (target) target.classList.add('active');
+  const tabs = document.querySelectorAll('#page-' + portal + ' .sub-tab');
+  tabs.forEach((t, i) => {
+    const tabIds = {
+      marketer: ['leads','funnel','bot','bulk'],
+      teacher: ['courses','upload','students'],
+      accounts: ['invoices','new-invoice']
+    };
+    if (tabIds[portal]) {
+      t.classList.toggle('active', tabIds[portal][i] === tab);
+    }
+  });
+}
+
+const botResponses = [
+  "Great! Could you tell me a bit more about your learning goals?",
+  "Interesting! When are you looking to start your studies?",
+  "Perfect. What is your approximate monthly budget for learning?",
+  "Thank you! One of our advisors will reach out within 24 hours. 🎯"
+];
+let botStep = 0;
+
+function sendBotMsg() {
+  const input = document.getElementById('botInput');
+  const chat = document.getElementById('botChat');
+  if (!input.value.trim()) return;
+  const userMsg = document.createElement('div');
+  userMsg.className = 'msg msg-user';
+  userMsg.textContent = input.value;
+  chat.appendChild(userMsg);
+  input.value = '';
+  setTimeout(() => {
+    const botMsg = document.createElement('div');
+    botMsg.className = 'msg msg-bot';
+    botMsg.textContent = botResponses[botStep % botResponses.length];
+    chat.appendChild(botMsg);
+    botStep++;
+    chat.scrollTop = chat.scrollHeight;
+  }, 700);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function insertTemplate(type) {
+  const templates = {
+    reminder: 'Hi {{name}}! 📅 Just a reminder that your {{course}} class starts in 1 hour. See you there!',
+    offer: 'Hi {{name}}! 🎁 Special offer: Get 20% off {{course}} this week only. Use code FORLINGO20.',
+    followup: 'Hi {{name}}! 👋 Following up on your interest in {{course}}. Any questions I can help with?',
+    cert: 'Congratulations {{name}}! 🏆 Your certificate for {{course}} is ready. Click here to download.'
+  };
+  document.querySelector('.wa-input[placeholder]').value = templates[type] || '';
+}
+
+function updateRole(sel, user) {
+  setTimeout(() => alert(`Role updated to: ${sel.value}`), 100);
+}
+
+buildSidebar('student');
+</script>
