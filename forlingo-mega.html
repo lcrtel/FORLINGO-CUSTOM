@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forlingo Academy — Platform Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+:root{
+  --g:#16a76b;--gdim:rgba(22,167,107,0.1);--gb:rgba(22,167,107,0.2);
+  --g2:#0fdb8a;--g3:#0d8a56;--g4:rgba(22,167,107,0.06);
+  --bg:#0f1511;--bg2:#151d18;--bg3:#1a2420;--bg4:#1f2d27;--bg5:#243229;
+  --bor:rgba(255,255,255,0.055);--bor2:rgba(255,255,255,0.1);--bor3:rgba(22,167,107,0.25);
+  --tx:#cce8d8;--tx2:#608070;--tx3:#3a5448;
+  --yw:#f5c542;--bl:#5b9cf6;--pu:#b197fc;--re:#ff6b6b;--te:#34d9c3;--or:#ff9f43;
+  --shadow:0 4px 24px rgba(0,0,0,0.4);
+  --shadow-sm:0 2px 8px rgba(0,0,0,0.3);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);font-size:13px;display:flex;flex-direction:column;}
+
+/* ═══ ROLE BAR ═══ */
+.rb{background:var(--bg2);border-bottom:1px solid var(--bor);height:36px;display:flex;align-items:center;gap:4px;padding:0 16px;flex-shrink:0;overflow-x:auto;}
+.rb::-webkit-scrollbar{display:none;}
+.rl{font-family:'Space Mono',monospace;font-size:9px;color:var(--tx3);margin-right:8px;letter-spacing:.12em;white-space:nowrap;text-transform:uppercase;}
+.rbtn{font-family:'Space Mono',monospace;font-size:9px;padding:4px 11px;border-radius:4px;border:1px solid var(--bor2);background:transparent;color:var(--tx2);cursor:pointer;white-space:nowrap;transition:all .2s;letter-spacing:.05em;}
+.rbtn:hover{border-color:var(--g);color:var(--g);background:var(--gdim);}
+.rbtn.on{background:var(--g);border-color:var(--g);color:#000;font-weight:700;}
+
+/* ═══ TOPBAR ═══ */
+.tb{height:52px;background:var(--bg2);border-bottom:1px solid var(--bor);display:flex;align-items:center;padding:0 18px;gap:12px;flex-shrink:0;z-index:100;}
+.logo{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--g2);letter-spacing:.06em;display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-icon{width:30px;height:30px;background:linear-gradient(135deg,var(--g) 0%,var(--g2) 100%);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.logo em{font-style:normal;color:var(--tx3);font-size:10px;font-family:'Space Mono',monospace;font-weight:400;margin-left:2px;}
+.ptag{font-family:'Space Mono',monospace;font-size:9px;padding:3px 10px;background:var(--gdim);color:var(--g2);border-radius:3px;border:1px solid var(--bor3);letter-spacing:.07em;white-space:nowrap;}
+.tbr{margin-left:auto;display:flex;align-items:center;gap:8px;}
+
+/* SEARCH */
+.srch-wrap{position:relative;}
+.srch{display:flex;align-items:center;gap:7px;background:var(--bg3);border:1px solid var(--bor2);border-radius:6px;padding:6px 11px;width:210px;transition:all .2s;}
+.srch:focus-within{border-color:var(--g);width:270px;background:var(--bg4);}
+.srch input{background:none;border:none;outline:none;color:var(--tx);font-size:12px;font-family:'DM Sans',sans-serif;width:100%;}
+.srch input::placeholder{color:var(--tx3);}
+.srch-icon{color:var(--tx3);font-size:13px;flex-shrink:0;}
+.srch-results{position:absolute;top:calc(100% + 6px);left:0;width:340px;background:var(--bg2);border:1px solid var(--bor2);border-radius:8px;box-shadow:var(--shadow);z-index:300;display:none;overflow:hidden;}
+.srch-results.open{display:block;}
+.sr-sec{font-family:'Space Mono',monospace;font-size:9px;color:var(--tx3);letter-spacing:.08em;padding:8px 12px 4px;background:var(--bg3);text-transform:uppercase;}
+.sr-item{display:flex;align-items:center;gap:9px;padding:9px 12px;cursor:pointer;border-bottom:1px solid var(--bor);transition:background .1s;}
+.sr-item:last-child{border-bottom:none;}
+.sr-item:hover{background:var(--gdim);}
+.sr-ic{width:26px;height:26px;border-radius:5px;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;}
+.sr-n{font-size:12px;font-weight:500;color:var(--tx);}
+.sr-m{font-size:10px;color:var(--tx2);}
+
+/* NOTIF */
+.bell-btn{width:32px;height:32px;border-radius:6px;border:1px solid var(--bor2);background:transparent;color:var(--tx2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;position:relative;transition:all .2s;}
+.bell-btn:hover{border-color:var(--g);color:var(--g);background:var(--gdim);}
+.bell-dot{width:7px;height:7px;background:var(--re);border-radius:50%;position:absolute;top:4px;right:4px;border:1.5px solid var(--bg2);}
+.notif-panel{position:absolute;top:calc(100% + 8px);right:0;width:330px;background:var(--bg2);border:1px solid var(--bor2);border-radius:10px;box-shadow:var(--shadow);z-index:300;display:none;overflow:hidden;}
+.notif-panel.open{display:block;}
+.np-head{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--bor);background:var(--bg3);}
+.np-title{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;}
+.np-badge{background:var(--re);color:#fff;font-size:9px;font-family:'Space Mono',monospace;padding:2px 6px;border-radius:10px;font-weight:700;}
+.np-clear{font-size:10px;color:var(--g);cursor:pointer;font-family:'Space Mono',monospace;letter-spacing:.04em;}
+.ni-item{display:flex;gap:10px;padding:11px 14px;border-bottom:1px solid var(--bor);cursor:pointer;transition:background .1s;}
+.ni-item:last-child{border-bottom:none;}
+.ni-item:hover{background:var(--gdim);}
+.ni-item.unread{border-left:2px solid var(--g2);}
+.ni-ico{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.ni-msg{font-size:12px;line-height:1.45;color:var(--tx);}
+.ni-time{font-family:'Space Mono',monospace;font-size:9px;color:var(--tx3);margin-top:3px;}
+
+/* AVATAR */
+.av{width:32px;height:32px;border-radius:7px;background:var(--gdim);border:1px solid var(--bor3);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:10px;color:var(--g2);font-weight:700;cursor:pointer;}
+.live-pill{display:inline-flex;align-items:center;gap:5px;font-family:'Space Mono',monospace;font-size:9px;color:var(--g2);background:var(--gdim);border:1px solid var(--bor3);border-radius:20px;padding:3px 10px;}
+.live-dot{width:5px;height:5px;background:var(--g2);border-radius:50%;animation:pulse 1.5s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ═══ LAYOUT ═══ */
+.main{display:flex;flex:1;overflow:hidden;}
+
+/* ═══ SIDEBAR ═══ */
+.sb{width:220px;background:var(--bg2);border-right:1px solid var(--bor);flex-shrink:0;overflow-y:auto;display:flex;flex-direction:column;padding-bottom:12px;}
+.sb::-webkit-scrollbar{width:2px;}.sb::-webkit-scrollbar-thumb{background:var(--bg5);}
+.ss{padding:14px 10px 2px;}
+.sl{font-family:'Space Mono',monospace;font-size:8px;color:var(--tx3);letter-spacing:.14em;text-transform:uppercase;padding:0 10px;margin-bottom:4px;}
+.ni{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:6px;cursor:pointer;color:var(--tx2);transition:all .15s;font-size:12px;font-weight:500;border:1px solid transparent;margin:1px 6px;position:relative;}
+.ni:hover{background:var(--bg3);color:var(--tx);}
+.ni.on{background:var(--gdim);color:var(--g2);border-color:var(--gb);}
+.ni.on::before{content:'';position:absolute;left:-7px;top:50%;transform:translateY(-50%);width:3px;height:18px;background:var(--g2);border-radius:2px;}
+.ni .ic{width:16px;text-align:center;font-size:14px;flex-shrink:0;}
+.nb{margin-left:auto;font-family:'Space Mono',monospace;font-size:8px;background:var(--re);color:#fff;border-radius:10px;padding:2px 6px;font-weight:700;}
+.nb.g{background:var(--g);}
+.sdv{border:none;border-top:1px solid var(--bor);margin:6px 10px;}
+
+/* ═══ CONTENT AREA ═══ */
+.ct{flex:1;overflow-y:auto;background:var(--bg);}
+.ct::-webkit-scrollbar{width:4px;}.ct::-webkit-scrollbar-thumb{background:var(--bg5);border-radius:2px;}
+.pg{display:none;padding:22px;}
+.pg.on{display:block;animation:fadeIn .2s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══ PAGE HEADER ═══ */
+.ph{margin-bottom:22px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+.pt{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;letter-spacing:.02em;color:var(--tx);}
+.ps{font-size:11px;color:var(--tx2);margin-top:3px;font-family:'Space Mono',monospace;letter-spacing:.03em;}
+.ph-actions{display:flex;gap:8px;align-items:center;flex-shrink:0;}
+
+/* ═══ STAT CARDS ═══ */
+.srow{display:grid;gap:10px;margin-bottom:18px;}
+.s4{grid-template-columns:repeat(4,1fr);}
+.s3{grid-template-columns:repeat(3,1fr);}
+.s2{grid-template-columns:repeat(2,1fr);}
+.s5{grid-template-columns:repeat(5,1fr);}
+.sc{background:var(--bg2);border:1px solid var(--bor);border-radius:10px;padding:15px 16px;position:relative;overflow:hidden;transition:border-color .2s,transform .2s;}
+.sc:hover{border-color:var(--bor2);transform:translateY(-1px);}
+.sc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--g),transparent);opacity:0;transition:opacity .3s;}
+.sc:hover::after{opacity:1;}
+.sc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.sc-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.sc-ico-g{background:var(--gdim);border:1px solid var(--bor3);}
+.sc-ico-b{background:rgba(91,156,246,.1);border:1px solid rgba(91,156,246,.2);}
+.sc-ico-y{background:rgba(245,197,66,.1);border:1px solid rgba(245,197,66,.2);}
+.sc-ico-r{background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.2);}
+.sc-ico-p{background:rgba(177,151,252,.1);border:1px solid rgba(177,151,252,.2);}
+.sc-ico-t{background:rgba(52,217,195,.1);border:1px solid rgba(52,217,195,.2);}
+.sl2{font-family:'Space Mono',monospace;font-size:9px;color:var(--tx3);letter-spacing:.08em;text-transform:uppercase;}
+.sv{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;line-height:1;}
+.sv.g{color:var(--g2);}
+.sv.r{color:var(--re);}
+.sv.a{color:var(--yw);}
+.sv.b{color:var(--bl);}
+.sv.p{color:var(--pu);}
+.sd{font-size:10px;color:var(--tx3);margin-top:5px;display:flex;align-items:center;gap:4px;}
+.sd.up{color:var(--g);}
+.sd.dn{color:var(--re);}
+
+/* ═══ CARDS ═══ */
+.card{background:var(--bg2);border:1px solid var(--bor);border-radius:10px;padding:16px;}
+.card-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--tx);margin-bottom:13px;display:flex;align-items:center;justify-content:space-between;}
+.card-title span{font-family:'Space Mono',monospace;font-size:9px;color:var(--tx3);font-weight:400;letter-spacing:.04em;}
+
+/* ═══ GRIDS ═══ */
+.g2c{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.g3c{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.g2c-l{display:grid;grid-template-columns:1.6fr 1fr;gap:14px;}
+.g2c-r{display:grid;grid-template-columns:1fr 1.6fr;gap:14px;}
+
+/* ═══ CHART CONTAINERS ═══ */
+.chart-box{position:relative;width:100%;}
+.chart-box canvas{width:100% !important;}
+
+/* ═══ TABLES ═══ */
+.tw{background:var(--bg2);border:1px solid var(--bor);border-radius:10px;overflow:hidden;margin-bottom:14px;}
+.th2{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;border-bottom:1px solid var(--bor);background:var(--bg3);}
+.tt{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--tx);}
+.ta{display:flex;gap:7px;align-items:center;}
+table{width:100%;border-collapse:collapse;}
+th{font-family:'Space Mono',monospace;font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;padding:9px 15px;text-align:left;border-bottom:1px solid var(--bor);background:var(--bg3);}
+td{padding:10px 15px;border-bottom:1px solid var(--bor);font-size:12px;color:var(--tx);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(22,167,107,0.03);}
+
+/* ═══ BADGES ═══ */
+.b{display:inline-flex;align-items:center;font-family:'Space Mono',monospace;font-size:9px;padding:3px 8px;border-radius:4px;font-weight:700;white-space:nowrap;letter-spacing:.03em;}
+.bp{background:rgba(245,197,66,.09);color:var(--yw);border:1px solid rgba(245,197,66,.22);}
+.bg{background:rgba(22,167,107,.1);color:var(--g2);border:1px solid rgba(22,167,107,.25);}
+.bn{background:rgba(91,156,246,.09);color:var(--bl);border:1px solid rgba(91,156,246,.22);}
+.bq{background:rgba(177,151,252,.09);color:var(--pu);border:1px solid rgba(177,151,252,.22);}
+.br{background:rgba(255,107,107,.09);color:var(--re);border:1px solid rgba(255,107,107,.22);}
+.bc{background:rgba(255,255,255,.04);color:var(--tx2);border:1px solid var(--bor);}
+.bt{background:rgba(52,217,195,.08);color:var(--te);border:1px solid rgba(52,217,195,.22);}
+.bo{background:rgba(255,159,67,.09);color:var(--or);border:1px solid rgba(255,159,67,.22);}
+
+/* ═══ BUTTONS ═══ */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 15px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all .15s;white-space:nowrap;}
+.btnp{background:var(--g);color:#000;font-weight:700;}
+.btnp:hover{background:var(--g2);transform:translateY(-1px);}
+.btng{background:transparent;color:var(--tx2);border:1px solid var(--bor2);}
+.btng:hover{background:var(--bg3);color:var(--tx);}
+.btnt{background:rgba(52,217,195,.1);color:var(--te);border:1px solid rgba(52,217,195,.25);}
+.btnb{background:rgba(91,156,246,.1);color:var(--bl);border:1px solid rgba(91,156,246,.25);}
+.btnwa{background:#128c7e;color:#fff;font-weight:700;}
+.btnwa:hover{background:#25d366;}
+.bsm{padding:4px 10px;font-size:11px;}
+.bxs{padding:2px 8px;font-size:10px;}
+
+/* ═══ TABS ═══ */
+.tabs{display:flex;gap:2px;background:var(--bg3);border:1px solid var(--bor);border-radius:7px;padding:3px;margin-bottom:18px;width:fit-content;}
+.tab{padding:6px 14px;border-radius:5px;font-size:11px;cursor:pointer;color:var(--tx2);transition:all .15s;font-family:'Space Mono',monospace;letter-spacing:.04em;}
+.tab.on{background:var(--bg2);color:var(--g2);border:1px solid var(--gb);box-shadow:0 1px 4px rgba(0,0,0,.3);}
+
+/* ═══ FORMS ═══ */
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.fg{display:flex;flex-direction:column;gap:5px;}
+.fg.full{grid-column:1/-1;}
+label{font-size:10px;color:var(--tx2);font-weight:500;letter-spacing:.04em;font-family:'Space Mono',monospace;}
+input,select,textarea{background:var(--bg3);border:1px solid var(--bor2);border-radius:6px;padding:8px 11px;color:var(--tx);font-size:12px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .15s;width:100%;}
+input:focus,select:focus,textarea:focus{border-color:var(--g);background:var(--bg4);}
+select option{background:var(--bg3);}
+::placeholder{color:var(--tx3);}
+
+/* ═══ PROGRESS BARS ═══ */
+.pbw{display:flex;flex-direction:column;gap:9px;}
+.pbr{display:flex;align-items:center;gap:10px;}
+.pbl{font-family:'Space Mono',monospace;font-size:9px;color:var(--tx2);width:82px;text-align:right;flex-shrink:0;letter-spacing:.02em;}
+.pbk{flex:1;height:22px;background:var(--bg3);border-radius:4px;overflow:hidden;border:1px solid var(--bor);}
+.pbf{height:100%;border-radius:3px;display:flex;align-items:center;padding-left:9px;font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#000;}
+.pf-g{background:linear-gradient(90deg,var(--g),var(--g2));}
+.pf-b{background:linear-gradient(90deg,#3a7bd5,var(--bl));}
+.pf-p{background:linear-gradient(90deg,#7c3aed,var(--pu));}
+.pf-t{background:linear-gradient(90deg,#0d9488,var(--te));}
+.pf-y{background:linear-gradient(90deg,#d97706,var(--yw));}
+.pf-r{background:linear-gradient(90deg,#dc2626,var(--re));}
+
+/* ═══ TOGGLE ═══ */
+.tog{width:34px;height:18px;background:var(--bg4);border-radius:10px;border:1px solid var(--bor2);cursor:pointer;position:relative;transition:all .2s;flex-shrink:0;}
+.tog.on{background:var(--g);border-color:var(--g);}
+.tog::after{content:'';position:absolute;width:12px;height:12px;background:#fff;border-radius:50%;top:2px;left:2px;transition:left .2s;}
+.tog.on::after{left:18px;}
+
+/* ═══ TIMELINE ═══ */
+.tl{display:flex;flex-direction:column;gap:0;}
+.tli{display:flex;gap:12px;padding-bottom:14px;position:relative;}
+.tld{width:9px;height:9px;border-radius:50%;background:var(--g);flex-shrink:0;margin-top:3px;border:2px solid var(--bg2);box-shadow:0 0 0 2px var(--g);}
+.tll{position:absolute;left:4px;top:11px;bottom:0;width:1px;background:var(--bg4);}
+.tli:last-child .tll{display:none;}
+.tlt{font-size:12px;color:var(--tx2);line-height:1.5;}
+.tlts{font-family:'Space Mono',monospace;font-size:9px;color:var(--tx3);margin-top:2px;}
+.tlt strong{color:var(--tx);font-weight:600;}
+
+/* ═══ LEAD CARDS ═══ */
+.lc{background:var(--bg2);border:1px solid var(--bor);border-radius:8px;padding:12px;display:flex;align-items:center;gap:11px;transition:all .15s;cursor:pointer;}
+.lc:hover{border-color:var(--bor2);background:var(--bg3);}
+.lc.hot{border-left:3px solid var(--re);}
+.lc.warm{border-left:3px solid var(--yw);}
+.lc.cold{border-left:3px solid var(--bl);}
+.lc.conv{border-left:3px solid var(--g);}
+.lav{width:36px;height:36px;border-radius:8px;background:var(--bg4);border:1px solid var(--bor2);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:var(--g2);flex-shrink:0;}
+.li{flex:1;min-width:0;}
+.ln{font-weight:600;font-size:13px;color:var(--tx);}
+.lm{font-size:11px;color:var(--tx2);margin-top:2px;}
+.la2{display:flex;gap:5px;flex-shrink:0;align-items:center;}
+
+/* ═══ MODAL ═══ */
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;align-items:center;justify-content:center;backdrop-filter:blur(2px);}
+.mo.on{display:flex;}
+.mdl{background:var(--bg2);border:1px solid var(--bor2);border-radius:12px;padding:22px;width:460px;max-width:94vw;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow);}
+.mdl::-webkit-scrollbar{width:2px;}.mdl::-webkit-scrollbar-thumb{background:var(--bg5);}
+.mt2{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;margin-bottom:16px;color:var(--tx);}
+.mf{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;}
+
+/* ═══ WHATSAPP CHAT ═══ */
+.wa-bg{background:linear-gradient(135deg,#0a1a0d 0%,#0d2114 100%);border:1px solid rgba(37,211,102,.12);border-radius:10px;padding:16px;}
+.wa-head{display:flex;align-items:center;gap:9px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid rgba(37,211,102,.12);}
+.wa-avatar{width:36px;height:36px;border-radius:50%;background:rgba(37,211,102,.15);border:2px solid rgba(37,211,102,.3);display:flex;align-items:center;justify-content:center;font-size:16px;}
+.wa-name{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:#25d366;}
+.wa-status{font-size:10px;color:rgba(37,211,102,.6);font-family:'Space Mono',monospace;}
+.wac{background:rgba(0,0,0,.3);border-radius:8px;padding:10px;height:200px;overflow-y:auto;margin-bottom:10px;display:flex;flex-direction:column;gap:8px;}
+.wac::-webkit-scrollbar{width:2px;}
+.wb{max-width:78%;padding:9px 12px;border-radius:10px;font-size:12px;line-height:1.5;position:relative;}
+.wo{background:rgba(37,211,102,.18);color:#cce8d8;align-self:flex-end;border-bottom-right-radius:3px;}
+.wi{background:rgba(255,255,255,.06);color:#9bbdad;align-self:flex-start;border-bottom-left-radius:3px;}
+.wt{font-size:9px;color:rgba(255,255,255,.25);margin-top:3px;text-align:right;font-family:'Space Mono',monospace;}
+.wscore{background:rgba(245,197,66,.1);color:var(--yw);border:1px solid rgba(245,197,66,.2);border-radius:6px;padding:6px 12px;font-family:'Space Mono',monospace;font-size:9px;align-self:center;letter-spacing:.04em;}
+
+/* ═══ FUNNEL STAGES ═══ */
+.funnel-item{border-radius:8px;padding:12px 16px;display:flex;align-items:center;gap:13px;margin-bottom:7px;}
+.fi-label{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.05em;flex:1;}
+.fi-bar-wrap{flex:2;background:rgba(255,255,255,.05);border-radius:4px;height:10px;overflow:hidden;}
+.fi-bar{height:100%;border-radius:4px;}
+.fi-count{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;min-width:40px;text-align:right;}
+
+/* ═══ KANBAN ═══ */
+.kanban{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;overflow-x:auto;padding-bottom:8px;}
+.kan-col{background:var(--bg3);border:1px solid var(--bor);border-radius:8px;padding:10px;min-width:160px;}
+.kan-head{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.07em;font-weight:700;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;}
+.kan-card{background:var(--bg2);border:1px solid var(--bor);border-radius:6px;padding:9px;margin-bottom:7px;cursor:pointer;transition:border-color .15s;}
+.kan-card:hover{border-color:var(--bor2);}
+.kan-card:last-child{margin-bottom:0;}
+.kc-name{font-size:12px;font-weight:600;color:var(--tx);}
+.kc-course{font-size:10px;color:var(--tx2);margin-top:2px;}
+.kc-score{font-family:'Space Mono',monospace;font-size:9px;margin-top:6px;}
+.kc-time{font-size:9px;color:var(--tx3);margin-top:3px;font-family:'Space Mono',monospace;}
+
+/* ═══ CAMPAIGN STEPS ═══ */
+.camp-steps{display:flex;flex-direction:column;gap:8px;}
+.camp-step{display:flex;align-items:center;gap:10px;background:var(--bg3);border:1px solid var(--bor);border-radius:7px;padding:11px 13px;}
+.cs-day{font-family:'Space Mono',monospace;font-size:9px;color:var(--g2);background:var(--gdim);border:1px solid var(--bor3);border-radius:4px;padding:2px 8px;flex-shrink:0;}
+.cs-ico{font-size:16px;flex-shrink:0;}
+.cs-body{flex:1;}
+.cs-title{font-size:12px;font-weight:600;color:var(--tx);}
+.cs-sub{font-size:10px;color:var(--tx2);margin-top:2px;}
+.cs-arrow{color:var(--tx3);font-size:12px;}
+
+/* ═══ SCORE METER ═══ */
+.score-ring{position:relative;width:100px;height:100px;margin:0 auto;}
+.score-ring svg{transform:rotate(-90deg);}
+.score-ring .val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:22px;}
+
+/* ═══ INVOICE ═══ */
+.inv-doc{background:var(--bg2);border:1px solid var(--bor);border-radius:10px;padding:18px;}
+.inv-head{display:flex;justify-content:space-between;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--bor);}
+.inv-logo{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--g2);}
+.inv-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bor);font-size:12px;}
+.inv-total{display:flex;justify-content:space-between;padding:12px 0 0;font-weight:700;font-size:16px;}
+
+/* ═══ COUPON CARD ═══ */
+.coup-card{background:linear-gradient(135deg,var(--bg3),var(--bg4));border:1px solid var(--bor2);border-radius:8px;padding:13px;margin-bottom:9px;display:flex;align-items:center;gap:12px;}
+.coup-code{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:var(--g2);background:var(--gdim);border:1px dashed var(--bor3);border-radius:5px;padding:6px 12px;letter-spacing:.08em;}
+.coup-info{flex:1;}
+.coup-disc{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--yw);}
+.coup-meta{font-size:11px;color:var(--tx2);margin-top:2px;}
+
+/* ═══ REFERRAL ═══ */
+.ref-link{background:var(--bg3);border:1px solid var(--bor3);border-radius:7px;padding:10px 13px;font-family:'Space Mono',monospace;font-size:11px;color:var(--g2);word-break:break-all;margin-bottom:10px;}
+
+/* ═══ ALERT ═══ */
+.alert{border-radius:7px;padding:10px 14px;font-size:12px;margin-bottom:14px;display:flex;align-items:center;gap:9px;}
+.alert-g{background:var(--gdim);border:1px solid var(--bor3);color:var(--g2);}
+.alert-y{background:rgba(245,197,66,.08);border:1px solid rgba(245,197,66,.2);color:var(--yw);}
+.alert-r{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--re);}
+.alert-b{background:rgba(91,156,246,.08);border:1px solid rgba(91,156,246,.2);color:var(--bl);}
+
+/* ═══ COURSE CARDS ═══ */
+.cc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;}
+.cc{background:var(--bg2);border:1px solid var(--bor);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s;}
+.cc:hover{border-color:var(--bor3);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.3);}
+.cc-thumb{height:88px;display:flex;align-items:center;justify-content:center;font-size:32px;}
+.cc-body{padding:13px;}
+.cc-title{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--tx);margin-bottom:3px;}
+.cc-sub{font-size:11px;color:var(--tx2);margin-bottom:9px;}
+.cc-prog{height:4px;background:var(--bg4);border-radius:2px;overflow:hidden;margin:7px 0 4px;}
+.cc-progf{height:100%;border-radius:2px;background:var(--g);}
+.cc-pct{font-family:'Space Mono',monospace;font-size:9px;color:var(--tx3);}
+
+/* ═══ CHAT INBOX ═══ */
+.inbox-wrap{display:grid;grid-template-columns:260px 1fr;gap:0;height:450px;border:1px solid var(--bor);border-radius:10px;overflow:hidden;}
+.inbox-list{border-right:1px solid var(--bor);overflow-y:auto;background:var(--bg2);}
+.inbox-list::-webkit-scrollbar{width:2px;}
+.inbox-search{padding:10px;border-bottom:1px solid var(--bor);}
+.inbox-search input{background:var(--bg3);border:1px solid var(--bor);border-radius:6px;padding:7px 10px;font-size:11px;color:var(--tx);outline:none;width:100%;}
+.inbox-item{padding:11px 13px;border-bottom:1px solid var(--bor);cursor:pointer;transition:background .1s;display:flex;gap:9px;align-items:flex-start;}
+.inbox-item:hover{background:var(--bg3);}
+.inbox-item.active{background:var(--gdim);border-left:2px solid var(--g2);}
+.inbox-item.unread .ii-name{color:var(--tx);font-weight:700;}
+.ii-av{width:32px;height:32px;border-radius:50%;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:var(--g2);flex-shrink:0;position:relative;}
+.ii-online{width:8px;height:8px;background:var(--g2);border-radius:50%;position:absolute;bottom:0;right:0;border:1.5px solid var(--bg2);}
+.ii-name{font-size:12px;font-weight:500;color:var(--tx2);}
+.ii-preview{font-size:10px;color:var(--tx3);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px;}
+.ii-time{font-family:'Space Mono',monospace;font-size:9px;color:var(--tx3);flex-shrink:0;}
+.inbox-chat{display:flex;flex-direction:column;background:var(--bg);}
+.chat-header{padding:12px 15px;border-bottom:1px solid var(--bor);background:var(--bg2);display:flex;align-items:center;justify-content:space-between;}
+.chat-msgs{flex:1;padding:14px;overflow-y:auto;display:flex;flex-direction:column;gap:9px;}
+.chat-msgs::-webkit-scrollbar{width:2px;}
+.chat-input-area{padding:10px 14px;border-top:1px solid var(--bor);background:var(--bg2);display:flex;gap:8px;}
+.chat-input-area input{flex:1;background:var(--bg3);border:1px solid var(--bor2);border-radius:6px;padding:8px 12px;font-size:12px;color:var(--tx);outline:none;}
+.chat-input-area input:focus{border-color:var(--g);}
+
+/* ═══ AB TEST CARD ═══ */
+.ab-ver{background:var(--bg3);border:1px solid var(--bor);border-radius:8px;padding:13px;margin-bottom:10px;}
+.ab-label{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.06em;margin-bottom:8px;}
+
+/* ═══ PERFORMANCE TABLE ═══ */
+.perf-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--bor);}
+.perf-row:last-child{border-bottom:none;}
+.perf-rank{font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:var(--tx3);width:24px;flex-shrink:0;}
+.perf-av{width:30px;height:30px;border-radius:7px;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:var(--g2);flex-shrink:0;}
+.perf-info{flex:1;}
+.perf-name{font-size:12px;font-weight:600;color:var(--tx);}
+.perf-meta{font-size:10px;color:var(--tx2);margin-top:2px;}
+.perf-num{font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:var(--g2);}
+
+/* ═══ MINI CHAT BUBBLE ═══ */
+.mc-bubble{background:var(--bg3);border:1px solid var(--bor);border-radius:7px;padding:9px 12px;font-size:11px;color:var(--tx2);line-height:1.5;margin-bottom:7px;position:relative;}
+.mc-bubble::before{content:'';position:absolute;left:14px;bottom:-5px;width:8px;height:8px;background:var(--bg3);border-right:1px solid var(--bor);border-bottom:1px solid var(--bor);transform:rotate(45deg);}
+
+/* ═══ SCROLLBAR GLOBAL ═══ */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--bg5);border-radius:2px;}
+
+/* ═══ NOTIF BELL WRAPPER ═══ */
+.bell-wrap{position:relative;}
+
+</style>
+</head>
+<body>
+
+<!-- ══════════ ROLE BAR ══════════ -->
+<div class="rb">
+  <span class="rl">VIEW AS →</span>
+  <button class="rbtn on" onclick="setRole('admin',this)">⬡ ADMIN</button>
+  <button class="rbtn" onclick="setRole('student',this)">◎ STUDENT</button>
+  <button class="rbtn" onclick="setRole('teacher',this)">◈ TEACHER</button>
+  <button class="rbtn" onclick="setRole('marketer',this)">◉ MARKETER</button>
+  <button class="rbtn" onclick="setRole('accounts',this)">✦ ACCOUNTS</button>
+</div>
+
+<!-- ══════════ TOPBAR ══════════ -->
+<div class="tb">
+  <div class="logo">
+    <div class="logo-icon">🌐</div>
+    FORLINGO <em>ACADEMY</em>
+  </div>
+  <div class="ptag" id="ptag">ADMIN PORTAL</div>
+  <div class="tbr">
+    <div class="live-pill"><span class="live-dot"></span>LIVE DEMO</div>
+
+    <!-- Search -->
+    <div class="srch-wrap">
+      <div class="srch">
+        <span class="srch-icon">🔍</span>
+        <input id="srchInput" placeholder="Search students, courses, leads..." oninput="handleSearch(this.value)" onfocus="showSearch()" onblur="setTimeout(()=>hideSearch(),200)">
+      </div>
+      <div class="srch-results" id="srchResults">
+        <div class="sr-sec">STUDENTS</div>
+        <div class="sr-item" onclick="setRole('student',document.querySelectorAll('.rbtn')[1])"><div class="sr-ic">🎓</div><div><div class="sr-n">Sara Ahmed</div><div class="sr-m">English Business · 72% complete</div></div></div>
+        <div class="sr-item"><div class="sr-ic">🎓</div><div><div class="sr-n">Yousef Al-Rashidi</div><div class="sr-m">IELTS Prep · Pending payment</div></div></div>
+        <div class="sr-sec">COURSES</div>
+        <div class="sr-item"><div class="sr-ic">📚</div><div><div class="sr-n">English for Business</div><div class="sr-m">148 students · SAR 1,499</div></div></div>
+        <div class="sr-item"><div class="sr-ic">📚</div><div><div class="sr-n">IELTS Prep Pro</div><div class="sr-m">96 students · SAR 1,899</div></div></div>
+        <div class="sr-sec">LEADS</div>
+        <div class="sr-item" onclick="setRole('marketer',document.querySelectorAll('.rbtn')[3])"><div class="sr-ic">🔥</div><div><div class="sr-n">Fatima Hassan</div><div class="sr-m">Hot lead · Score 87/100</div></div></div>
+      </div>
+    </div>
+
+    <!-- Notifications -->
+    <div class="bell-wrap">
+      <button class="bell-btn" onclick="toggleNotif()">🔔<span class="bell-dot"></span></button>
+      <div class="notif-panel" id="notifPanel">
+        <div class="np-head">
+          <span class="np-title">Notifications</span>
+          <span class="np-badge">5</span>
+          <span class="np-clear" onclick="document.getElementById('notifPanel').classList.remove('open')">Mark all read</span>
+        </div>
+        <div class="ni-item unread"><div class="ni-ico" style="background:rgba(255,107,107,.1)">🔥</div><div><div class="ni-msg"><strong>Hot lead alert</strong> — Fatima Hassan scored 87/100. Needs follow-up now.</div><div class="ni-time">2 min ago</div></div></div>
+        <div class="ni-item unread"><div class="ni-ico" style="background:rgba(245,197,66,.1)">💰</div><div><div class="ni-msg"><strong>Overdue invoice</strong> — Ahmed Rashid, SAR 1,499. 7 days overdue.</div><div class="ni-time">1 hr ago</div></div></div>
+        <div class="ni-item unread"><div class="ni-ico" style="background:rgba(22,167,107,.1)">🎓</div><div><div class="ni-msg"><strong>New enrolment</strong> — Nora Mohammed enrolled in Arabic Writing Pro.</div><div class="ni-time">3 hrs ago</div></div></div>
+        <div class="ni-item"><div class="ni-ico" style="background:rgba(91,156,246,.1)">📅</div><div><div class="ni-msg"><strong>Session in 1 hour</strong> — Grammar Q&A, English Business. 32 students attending.</div><div class="ni-time">Today</div></div></div>
+        <div class="ni-item"><div class="ni-ico" style="background:rgba(177,151,252,.1)">🤖</div><div><div class="ni-msg"><strong>Bot qualified 14 leads</strong> from last night's WhatsApp campaign.</div><div class="ni-time">Yesterday</div></div></div>
+      </div>
+    </div>
+
+    <div class="av" id="uav">AD</div>
+    <span style="font-size:12px;color:var(--tx2);font-weight:500" id="uname">Admin</span>
+  </div>
+</div>
+
+<!-- ══════════ MAIN LAYOUT ══════════ -->
+<div class="main">
+<div class="sb" id="sbel"></div>
+<div class="ct" id="ctel">
+
+<!-- ════════════════════════════════════════
+     ADMIN — COMMAND DASHBOARD
+════════════════════════════════════════ -->
+<div class="pg on" id="p-dash">
+  <div class="ph">
+    <div><div class="pt">Command Dashboard</div><div class="ps">platform overview · march 2026 · all portals</div></div>
+    <div class="ph-actions">
+      <button class="btn btng bsm">⬇ Export Report</button>
+      <button class="btn btnp bsm" onclick="showM('minvite')">+ Invite User</button>
+    </div>
+  </div>
+
+  <div class="srow s4">
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Monthly Revenue</div><div class="sv g">SAR 142K</div></div><div class="sc-icon sc-ico-g">💰</div></div><div class="sd up">↑ 24% vs last month</div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Active Students</div><div class="sv b">312</div></div><div class="sc-icon sc-ico-b">🎓</div></div><div class="sd up">↑ 29 enrolled this month</div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Hot Leads</div><div class="sv a">42</div></div><div class="sc-icon sc-ico-y">🔥</div></div><div class="sd">Need follow-up today</div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Completion Rate</div><div class="sv g">71%</div></div><div class="sc-icon sc-ico-t">📊</div></div><div class="sd up">Above industry avg.</div></div>
+  </div>
+
+  <div class="g2c" style="margin-bottom:14px">
+    <div class="card">
+      <div class="card-title">Revenue Trend — Last 6 Months</div>
+      <div class="chart-box" style="height:180px"><canvas id="chartRevenue"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Enrolment by Course</div>
+      <div class="chart-box" style="height:180px"><canvas id="chartEnrol"></canvas></div>
+    </div>
+  </div>
+
+  <div class="g2c" style="margin-bottom:14px">
+    <div class="tw" style="margin-bottom:0">
+      <div class="th2"><span class="tt">Recent Enrolments</span><button class="btn btng bsm">View All</button></div>
+      <table><thead><tr><th>Student</th><th>Course</th><th>Amount</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Sara Ahmed</td><td>English Business</td><td>SAR 1,499</td><td><span class="b bg">ACTIVE</span></td></tr>
+        <tr><td>Yousef Al-Rashidi</td><td>IELTS Prep Pro</td><td>SAR 1,899</td><td><span class="b bp">PENDING</span></td></tr>
+        <tr><td>Layla Tarek</td><td>Formal Arabic</td><td>SAR 999</td><td><span class="b bg">ACTIVE</span></td></tr>
+        <tr><td>Ahmed Rashid</td><td>English Business</td><td>SAR 1,499</td><td><span class="b br">OVERDUE</span></td></tr>
+        <tr><td>Nora Mohammed</td><td>Arabic Writing Pro</td><td>SAR 1,299</td><td><span class="b bg">ACTIVE</span></td></tr>
+      </tbody></table>
+    </div>
+    <div class="card">
+      <div class="card-title">Platform Activity Today</div>
+      <div class="tl">
+        <div class="tli"><div style="position:relative"><div class="tld"></div><div class="tll"></div></div><div><div class="tlt"><strong>142 lessons</strong> watched by students</div><div class="tlts">ongoing · right now</div></div></div>
+        <div class="tli"><div style="position:relative"><div class="tld"></div><div class="tll"></div></div><div><div class="tlt"><strong>14 new leads</strong> captured via WhatsApp bot</div><div class="tlts">2 hours ago</div></div></div>
+        <div class="tli"><div style="position:relative"><div class="tld"></div><div class="tll"></div></div><div><div class="tlt"><strong>6 invoices</strong> generated by Accounts team</div><div class="tlts">4 hours ago</div></div></div>
+        <div class="tli"><div style="position:relative"><div class="tld"></div><div class="tll"></div></div><div><div class="tlt"><strong>3 certificates</strong> auto-issued upon completion</div><div class="tlts">this morning</div></div></div>
+        <div class="tli"><div style="position:relative"><div class="tld"></div></div><div><div class="tlt"><strong>Campaign "Ramadan Push"</strong> sent to 287 leads</div><div class="tlts">yesterday</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="g2c">
+    <div class="card">
+      <div class="card-title">Revenue by Course</div>
+      <div class="pbw">
+        <div class="pbr"><span class="pbl">ENGLISH BUS.</span><div class="pbk"><div class="pbf pf-g" style="width:80%">SAR 58K</div></div></div>
+        <div class="pbr"><span class="pbl">IELTS PREP</span><div class="pbk"><div class="pbf pf-p" style="width:65%">SAR 44K</div></div></div>
+        <div class="pbr"><span class="pbl">ARABIC PRO</span><div class="pbk"><div class="pbf pf-b" style="width:42%">SAR 27K</div></div></div>
+        <div class="pbr"><span class="pbl">FRENCH 101</span><div class="pbk"><div class="pbf pf-t" style="width:20%">SAR 13K</div></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Lead Funnel This Week</div>
+      <div class="chart-box" style="height:140px"><canvas id="chartFunnel"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     ADMIN — USER ROLES
+════════════════════════════════════════ -->
+<div class="pg" id="p-roles">
+  <div class="ph">
+    <div><div class="pt">User Role Management</div><div class="ps">assign access · manage permissions · audit users</div></div>
+    <button class="btn btnp bsm" onclick="showM('minvite')">+ Invite User</button>
+  </div>
+  <div class="srow s4">
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Total Users</div><div class="sv">387</div></div><div class="sc-icon sc-ico-b">👥</div></div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Students</div><div class="sv g">312</div></div><div class="sc-icon sc-ico-g">🎓</div></div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Staff</div><div class="sv b">14</div></div><div class="sc-icon sc-ico-t">🧑‍💼</div></div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Pending Role</div><div class="sv a">3</div></div><div class="sc-icon sc-ico-y">⚠️</div></div></div>
+  </div>
+  <div class="alert alert-y">⚠ 3 new users joined today with no role assigned. They default to Student. Review below.</div>
+  <div class="tw">
+    <div class="th2"><span class="tt">All Users</span><div class="ta"><input placeholder="Search users..." style="width:160px"><select style="font-size:11px"><option>All Roles</option><option>Student</option><option>Teacher</option><option>Marketer</option><option>Accounts</option><option>Admin</option></select></div></div>
+    <table><thead><tr><th>User</th><th>Email</th><th>Joined</th><th>Role</th><th>Status</th><th>Action</th></tr></thead>
+    <tbody>
+      <tr><td><div style="display:flex;align-items:center;gap:8px"><div class="lav" style="width:28px;height:28px;font-size:9px">SA</div>Sara Ahmed</div></td><td style="color:var(--tx2);font-size:11px">sara@forlingo.sa</td><td style="color:var(--tx3);font-family:'Space Mono',monospace;font-size:10px">Mar 2026</td><td><span class="b bc">STUDENT</span></td><td><span class="b bg">Active</span></td><td><select style="font-size:10px;padding:3px 6px;width:110px"><option selected>Student</option><option>Teacher</option><option>Marketer</option><option>Accounts</option><option>Admin</option></select></td></tr>
+      <tr><td><div style="display:flex;align-items:center;gap:8px"><div class="lav" style="width:28px;height:28px;font-size:9px;color:var(--bl)">MK</div>Mohammed Khalid</div></td><td style="color:var(--tx2);font-size:11px">mk@forlingo.sa</td><td style="color:var(--tx3);font-family:'Space Mono',monospace;font-size:10px">Feb 2026</td><td><span class="b bn">TEACHER</span></td><td><span class="b bg">Active</span></td><td><select style="font-size:10px;padding:3px 6px;width:110px"><option>Student</option><option selected>Teacher</option><option>Marketer</option><option>Accounts</option><option>Admin</option></select></td></tr>
+      <tr><td><div style="display:flex;align-items:center;gap:8px"><div class="lav" style="width:28px;height:28px;font-size:9px;color:var(--pu)">LT</div>Layla Tarek</div></td><td style="color:var(--tx2);font-size:11px">layla@forlingo.sa</td><td style="color:var(--tx3);font-family:'Space Mono',monospace;font-size:10px">Jan 2026</td><td><span class="b bq">MARKETER</span></td><td><span class="b bg">Active</span></td><td><select style="font-size:10px;padding:3px 6px;width:110px"><option>Student</option><option>Teacher</option><option selected>Marketer</option><option>Accounts</option><option>Admin</option></select></td></tr>
+      <tr><td><div style="display:flex;align-items:center;gap:8px"><div class="lav" style="width:28px;height:28px;font-size:9px;color:var(--te)">HA</div>Hana Al-Sayed</div></td><td style="color:var(--tx2);font-size:11px">hana@forlingo.sa</td><td style="color:var(--tx3);font-family:'Space Mono',monospace;font-size:10px">Dec 2025</td><td><span class="b bt">ACCOUNTS</span></td><td><span class="b bg">Active</span></td><td><select style="font-size:10px;padding:3px 6px;width:110px"><option>Student</option><option>Teacher</option><option>Marketer</option><option selected>Accounts</option><option>Admin</option></select></td></tr>
+      <tr style="background:rgba(245,197,66,.03)"><td><div style="display:flex;align-items:center;gap:8px"><div class="lav" style="width:28px;height:28px;font-size:9px;color:var(--yw)">NR</div>Nada Rashed</div></td><td style="color:var(--tx2);font-size:11px">nada@gmail.com</td><td style="color:var(--tx3);font-family:'Space Mono',monospace;font-size:10px">Today</td><td><span class="b bp">PENDING</span></td><td><span class="b bc">New</span></td><td><div style="display:flex;gap:5px"><select style="font-size:10px;padding:3px 6px;width:110px"><option selected>Student</option><option>Teacher</option><option>Marketer</option><option>Accounts</option><option>Admin</option></select><button class="btn btnp bxs">Assign</button></div></td></tr>
+    </tbody></table>
+  </div>
+  <div class="g2c">
+    <div class="card">
+      <div class="card-title">Role Distribution</div>
+      <div class="chart-box" style="height:160px"><canvas id="chartRoles"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Platform Permissions Matrix</div>
+      <table style="font-size:11px"><thead><tr><th>Feature</th><th>Admin</th><th>Teacher</th><th>Marketer</th><th>Accounts</th><th>Student</th></tr></thead>
+      <tbody>
+        <tr><td>All Courses View</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td></tr>
+        <tr><td>User Management</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td></tr>
+        <tr><td>Lead CRM</td><td>✅</td><td>❌</td><td>✅</td><td>❌</td><td>❌</td></tr>
+        <tr><td>Invoices</td><td>✅</td><td>❌</td><td>❌</td><td>✅</td><td>❌</td></tr>
+        <tr><td>Course Studio</td><td>✅</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     ADMIN — ALL COURSES (NEW)
+════════════════════════════════════════ -->
+<div class="pg" id="p-allcourses">
+  <div class="ph">
+    <div><div class="pt">All Courses Library</div><div class="ps">every course across all teachers · platform-wide view</div></div>
+    <div class="ph-actions">
+      <button class="btn btng bsm">Filter</button>
+      <button class="btn btnp bsm" onclick="showM('mcourse')">+ New Course</button>
+    </div>
+  </div>
+  <div class="srow s4">
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Total Courses</div><div class="sv b">18</div></div><div class="sc-icon sc-ico-b">📚</div></div><div class="sd up">6 new this month</div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Published</div><div class="sv g">12</div></div><div class="sc-icon sc-ico-g">✅</div></div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">In Draft</div><div class="sv a">6</div></div><div class="sc-icon sc-ico-y">✏️</div></div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Total Enrolled</div><div class="sv g">312</div></div><div class="sc-icon sc-ico-t">🎓</div></div></div>
+  </div>
+  <div class="tw">
+    <div class="th2"><span class="tt">All Courses — All Teachers</span><div class="ta">
+      <select style="font-size:11px"><option>All Teachers</option><option>Dr. Mohammed K.</option><option>Sara L.</option><option>Ahmed R.</option></select>
+      <select style="font-size:11px"><option>All Languages</option><option>English</option><option>Arabic</option><option>French</option><option>Spanish</option></select>
+      <select style="font-size:11px"><option>All Status</option><option>Published</option><option>Draft</option></select>
+    </div></div>
+    <table><thead><tr><th>Course</th><th>Teacher</th><th>Language</th><th>Students</th><th>Revenue</th><th>Rating</th><th>Status</th><th>Action</th></tr></thead>
+    <tbody>
+      <tr><td><div style="font-weight:600">🇬🇧 English for Business</div><div style="font-size:10px;color:var(--tx3)">Intermediate · 32 lessons</div></td><td style="color:var(--tx2)">Dr. Mohammed K.</td><td><span class="b bc">EN</span></td><td><strong>148</strong></td><td style="color:var(--g2);font-weight:600">SAR 58K</td><td style="color:var(--yw)">★ 4.8</td><td><span class="b bg">PUBLISHED</span></td><td><button class="btn btng bsm">Manage</button></td></tr>
+      <tr><td><div style="font-weight:600">🇸🇦 Formal Arabic Writing</div><div style="font-size:10px;color:var(--tx3)">Advanced · 28 lessons</div></td><td style="color:var(--tx2)">Dr. Mohammed K.</td><td><span class="b bc">AR</span></td><td><strong>96</strong></td><td style="color:var(--g2);font-weight:600">SAR 27K</td><td style="color:var(--yw)">★ 4.6</td><td><span class="b bg">PUBLISHED</span></td><td><button class="btn btng bsm">Manage</button></td></tr>
+      <tr><td><div style="font-weight:600">📋 IELTS Preparation Pro</div><div style="font-size:10px;color:var(--tx3)">All Levels · 45 lessons</div></td><td style="color:var(--tx2)">Sara L.</td><td><span class="b bc">EN</span></td><td><strong>68</strong></td><td style="color:var(--g2);font-weight:600">SAR 44K</td><td style="color:var(--yw)">★ 4.9</td><td><span class="b bg">PUBLISHED</span></td><td><button class="btn btng bsm">Manage</button></td></tr>
+      <tr><td><div style="font-weight:600">🇫🇷 French Fundamentals</div><div style="font-size:10px;color:var(--tx3)">Beginner · 20 lessons</div></td><td style="color:var(--tx2)">Ahmed R.</td><td><span class="b bc">FR</span></td><td><strong>—</strong></td><td style="color:var(--tx3)">—</td><td style="color:var(--tx3)">—</td><td><span class="b bp">DRAFT</span></td><td><button class="btn btnt bsm">Review</button></td></tr>
+      <tr><td><div style="font-weight:600">🗣️ Business Arabic Speaking</div><div style="font-size:10px;color:var(--tx3)">Intermediate · 18 lessons</div></td><td style="color:var(--tx2)">Dr. Mohammed K.</td><td><span class="b bc">AR</span></td><td><strong>—</strong></td><td style="color:var(--tx3)">—</td><td style="color:var(--tx3)">—</td><td><span class="b bp">DRAFT</span></td><td><button class="btn btnt bsm">Review</button></td></tr>
+      <tr><td><div style="font-weight:600">🇪🇸 Spanish Starter</div><div style="font-size:10px;color:var(--tx3)">Beginner · 15 lessons</div></td><td style="color:var(--tx2)">Sara L.</td><td><span class="b bc">ES</span></td><td><strong>—</strong></td><td style="color:var(--tx3)">—</td><td style="color:var(--tx3)">—</td><td><span class="b bp">DRAFT</span></td><td><button class="btn btnp bsm">Approve</button></td></tr>
+    </tbody></table>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     STUDENT PORTAL
+════════════════════════════════════════ -->
+<div class="pg" id="p-student">
+  <div class="ph">
+    <div><div class="pt">My Learning Hub</div><div class="ps">welcome back, sara · 7-day streak 🔥 · top 15% of class</div></div>
+    <button class="btn btnp bsm">+ Enrol in Course</button>
+  </div>
+  <div class="srow s4">
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Courses Enrolled</div><div class="sv">4</div></div><div class="sc-icon sc-ico-b">📖</div></div><div class="sd">2 in progress</div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Hours Learned</div><div class="sv g">47</div></div><div class="sc-icon sc-ico-g">⏱️</div></div><div class="sd up">↑ 3 hrs this week</div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Certificates</div><div class="sv b">2</div></div><div class="sc-icon sc-ico-t">🏆</div></div><div class="sd">1 pending</div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Avg. Quiz Score</div><div class="sv g">84%</div></div><div class="sc-icon sc-ico-p">🎯</div></div><div class="sd up">Top 15% of class</div></div>
+  </div>
+  <div class="alert alert-g">📡 New lesson available — "Advanced Arabic Grammar – Unit 6" in your enrolled course. <button class="btn btnp bxs" style="margin-left:8px">Watch Now</button></div>
+
+  <div class="g2c" style="margin-bottom:14px">
+    <div class="card">
+      <div class="card-title">My Progress Overview</div>
+      <div class="chart-box" style="height:160px"><canvas id="chartStudentProg"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Weekly Activity</div>
+      <div class="chart-box" style="height:160px"><canvas id="chartStudentActivity"></canvas></div>
+    </div>
+  </div>
+
+  <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:12px;">My Courses</div>
+  <div class="cc-grid" style="margin-bottom:16px">
+    <div class="cc"><div class="cc-thumb" style="background:rgba(22,167,107,.06)">🇬🇧</div><div class="cc-body"><div class="cc-title">English for Business</div><div class="cc-sub">32 lessons · Intermediate · Dr. Mohammed K.</div><div class="cc-prog"><div class="cc-progf" style="width:72%"></div></div><div class="cc-pct">72% COMPLETE</div><button class="btn btnp bsm" style="width:100%;margin-top:10px;justify-content:center">Continue →</button></div></div>
+    <div class="cc"><div class="cc-thumb" style="background:rgba(245,197,66,.06)">🇸🇦</div><div class="cc-body"><div class="cc-title">Formal Arabic Writing</div><div class="cc-sub">28 lessons · Advanced · Dr. Mohammed K.</div><div class="cc-prog"><div class="cc-progf" style="width:45%;background:var(--yw)"></div></div><div class="cc-pct">45% COMPLETE</div><button class="btn btnp bsm" style="width:100%;margin-top:10px;justify-content:center">Continue →</button></div></div>
+    <div class="cc" style="border-color:var(--bor3)"><div class="cc-thumb" style="background:rgba(52,217,195,.05)">🇫🇷</div><div class="cc-body"><div class="cc-title">French Fundamentals</div><div class="cc-sub">20 lessons · Beginner · Ahmed R.</div><div class="cc-prog"><div class="cc-progf" style="width:100%"></div></div><div class="cc-pct" style="color:var(--g2)">✓ COMPLETED</div><button class="btn btng bsm" style="width:100%;margin-top:10px;justify-content:center">🏆 Download Certificate</button></div></div>
+  </div>
+
+  <div class="g2c">
+    <div class="card">
+      <div class="card-title">Upcoming Live Sessions</div>
+      <div class="tl">
+        <div class="tli"><div style="position:relative"><div class="tld"></div><div class="tll"></div></div><div><div class="tlt"><strong>Grammar Q&A</strong> — English Business</div><div class="tlts">tomorrow · 7:00 PM · Zoom · 32 attending</div></div></div>
+        <div class="tli"><div style="position:relative"><div class="tld"></div><div class="tll"></div></div><div><div class="tlt"><strong>Arabic Speaking Practice</strong></div><div class="tlts">thursday · 9:00 PM · Zoom · 18 attending</div></div></div>
+        <div class="tli"><div style="position:relative"><div class="tld"></div></div><div><div class="tlt"><strong>Mock Exam Review</strong> — IELTS Prep</div><div class="tlts">saturday · 6:00 PM · Zoom · 41 attending</div></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Leaderboard — English Business</div>
+      <div class="perf-row"><div class="perf-rank">🥇</div><div class="perf-av">SA</div><div class="perf-info"><div class="perf-name">Sara Ahmed (You)</div><div class="perf-meta">84% avg · 47 hrs learned</div></div><div class="perf-num">84%</div></div>
+      <div class="perf-row"><div class="perf-rank">🥈</div><div class="perf-av" style="color:var(--bl)">LT</div><div class="perf-info"><div class="perf-name">Layla Tarek</div><div class="perf-meta">82% avg · 39 hrs learned</div></div><div class="perf-num" style="color:var(--bl)">82%</div></div>
+      <div class="perf-row"><div class="perf-rank">🥉</div><div class="perf-av" style="color:var(--yw)">YA</div><div class="perf-info"><div class="perf-name">Yousef Al-Rashidi</div><div class="perf-meta">77% avg · 28 hrs learned</div></div><div class="perf-num" style="color:var(--yw)">77%</div></div>
+      <div class="perf-row"><div class="perf-rank" style="font-size:13px">4.</div><div class="perf-av" style="color:var(--re)">AR</div><div class="perf-info"><div class="perf-name">Ahmed Rashid</div><div class="perf-meta">61% avg · 12 hrs learned</div></div><div class="perf-num" style="color:var(--re)">61%</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     TEACHER STUDIO
+════════════════════════════════════════ -->
+<div class="pg" id="p-teacher">
+  <div class="ph">
+    <div><div class="pt">Teacher Studio</div><div class="ps">manage courses · upload content · quiz builder · student analytics</div></div>
+    <button class="btn btnp bsm" onclick="showM('mcourse')">+ New Course</button>
+  </div>
+  <div class="srow s4">
+    <div class="sc"><div class="sc-top"><div><div class="sl2">My Courses</div><div class="sv">6</div></div><div class="sc-icon sc-ico-b">📚</div></div><div class="sd">3 published</div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Total Students</div><div class="sv g">312</div></div><div class="sc-icon sc-ico-g">🎓</div></div><div class="sd up">↑ 24 this month</div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Avg. Rating</div><div class="sv g">4.8★</div></div><div class="sc-icon sc-ico-y">⭐</div></div><div class="sd">from 142 reviews</div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Completion Rate</div><div class="sv g">71%</div></div><div class="sc-icon sc-ico-t">📊</div></div><div class="sd up">above average</div></div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab on" onclick="stab(this,'t-courses')">My Courses</div>
+    <div class="tab" onclick="stab(this,'t-upload')">Upload Content</div>
+    <div class="tab" onclick="stab(this,'t-students')">Students</div>
+    <div class="tab" onclick="stab(this,'t-quiz')">Quiz Builder</div>
+    <div class="tab" onclick="stab(this,'t-analytics')">Analytics</div>
+  </div>
+
+  <div id="t-courses">
+    <div class="g2c" style="margin-bottom:14px">
+      <div class="card">
+        <div class="card-title">Student Engagement Rate</div>
+        <div class="chart-box" style="height:150px"><canvas id="chartTeacherEngagement"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Quiz Scores Distribution</div>
+        <div class="chart-box" style="height:150px"><canvas id="chartQuizScores"></canvas></div>
+      </div>
+    </div>
+    <div class="tw"><div class="th2"><span class="tt">My Courses</span></div>
+    <table><thead><tr><th>Course</th><th>Students</th><th>Lessons</th><th>Avg Score</th><th>Completion</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+      <tr><td><div style="font-weight:600">🇬🇧 English for Business</div><div style="font-size:10px;color:var(--tx3)">Intermediate</div></td><td>148</td><td>32</td><td style="color:var(--g2);font-weight:600">84%</td><td><div style="width:80px;height:5px;background:var(--bg4);border-radius:3px;overflow:hidden"><div style="width:85%;height:100%;background:var(--g);border-radius:3px"></div></div></td><td><span class="b bg">PUBLISHED</span></td><td><button class="btn btng bsm">Edit</button></td></tr>
+      <tr><td><div style="font-weight:600">🇸🇦 Formal Arabic Writing</div><div style="font-size:10px;color:var(--tx3)">Advanced</div></td><td>96</td><td>28</td><td style="color:var(--g2);font-weight:600">77%</td><td><div style="width:80px;height:5px;background:var(--bg4);border-radius:3px;overflow:hidden"><div style="width:60%;height:100%;background:var(--yw);border-radius:3px"></div></div></td><td><span class="b bg">PUBLISHED</span></td><td><button class="btn btng bsm">Edit</button></td></tr>
+      <tr><td><div style="font-weight:600">📋 IELTS Prep Pro</div><div style="font-size:10px;color:var(--tx3)">All Levels</div></td><td>—</td><td>18/45</td><td style="color:var(--tx3)">—</td><td><div style="width:80px;height:5px;background:var(--bg4);border-radius:3px;overflow:hidden"><div style="width:40%;height:100%;background:var(--pu);border-radius:3px"></div></div></td><td><span class="b bp">DRAFT</span></td><td><button class="btn btnt bsm">Continue</button></td></tr>
+    </tbody></table></div>
+  </div>
+
+  <div id="t-upload" style="display:none">
+    <div class="g2c">
+      <div class="card">
+        <div class="card-title">Upload New Lesson</div>
+        <div class="fr">
+          <div class="fg"><label>Course</label><select><option>English for Business</option><option>Formal Arabic Writing</option><option>IELTS Prep</option></select></div>
+          <div class="fg"><label>Unit Number</label><input type="number" value="7" min="1"></div>
+          <div class="fg full"><label>Lesson Title</label><input placeholder="e.g. Module 7 – Conditionals in Context"></div>
+        </div>
+        <div style="border:1px dashed var(--bor2);border-radius:8px;padding:28px;text-align:center;color:var(--tx3);margin-bottom:10px;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='var(--g)';this.style.background='var(--gdim)'" onmouseout="this.style.borderColor='var(--bor2)';this.style.background='transparent'">
+          <div style="font-size:26px;margin-bottom:7px">📤</div>
+          <div style="font-size:12px;color:var(--tx2)">Drag & drop video or PDF</div>
+          <div style="font-family:'Space Mono',monospace;font-size:9px;margin-top:4px">MP4 · PDF · DOCX · MAX 2GB</div>
+        </div>
+        <button class="btn btnp" style="width:100%;justify-content:center">Upload Lesson</button>
+      </div>
+      <div class="card">
+        <div class="card-title">Lesson Settings</div>
+        <div class="fr">
+          <div class="fg"><label>Visibility</label><select><option>Published</option><option>Draft</option><option>Scheduled</option></select></div>
+          <div class="fg"><label>Est. Duration (min)</label><input type="number" value="45"></div>
+          <div class="fg full"><label>Description</label><textarea rows="3" placeholder="Brief lesson description..."></textarea></div>
+          <div class="fg full"><label>Prerequisites</label><input placeholder="e.g. Lesson 6 completion required"></div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px"><span style="font-size:12px;color:var(--tx2)">Enable quiz after lesson</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:12px;color:var(--tx2)">Send student notification</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="t-students" style="display:none">
+    <div class="tw"><div class="th2"><span class="tt">My Students</span><div class="ta"><input placeholder="Search..." style="width:140px"><select style="font-size:11px"><option>All Courses</option><option>English Business</option><option>Arabic Writing</option></select></div></div>
+    <table><thead><tr><th>Student</th><th>Course</th><th>Progress</th><th>Avg Score</th><th>Last Active</th><th>Action</th></tr></thead>
+    <tbody>
+      <tr><td><div style="display:flex;align-items:center;gap:8px"><div class="lav" style="width:26px;height:26px;font-size:9px">SA</div>Sara Ahmed</div></td><td>English Business</td><td><div style="width:70px;height:5px;background:var(--bg4);border-radius:3px;overflow:hidden"><div style="width:72%;height:100%;background:var(--g);border-radius:3px"></div></div> <span style="font-size:10px;color:var(--tx2)">72%</span></td><td style="color:var(--g2);font-weight:600">84%</td><td><span class="b bg" style="font-size:9px">TODAY</span></td><td><button class="btn btng bsm">View</button></td></tr>
+      <tr><td><div style="display:flex;align-items:center;gap:8px"><div class="lav" style="width:26px;height:26px;font-size:9px;color:var(--pu)">LT</div>Layla Tarek</div></td><td>IELTS Prep</td><td><div style="width:70px;height:5px;background:var(--bg4);border-radius:3px;overflow:hidden"><div style="width:91%;height:100%;background:var(--pu);border-radius:3px"></div></div> <span style="font-size:10px;color:var(--tx2)">91%</span></td><td style="color:var(--g2);font-weight:600">92%</td><td><span class="b bc" style="font-size:9px">2 DAYS</span></td><td><button class="btn btng bsm">View</button></td></tr>
+      <tr><td><div style="display:flex;align-items:center;gap:8px"><div class="lav" style="width:26px;height:26px;font-size:9px;color:var(--re)">AR</div>Ahmed Rashid</div></td><td>English Business</td><td><div style="width:70px;height:5px;background:var(--bg4);border-radius:3px;overflow:hidden"><div style="width:33%;height:100%;background:var(--re);border-radius:3px"></div></div> <span style="font-size:10px;color:var(--tx2)">33%</span></td><td style="color:var(--re);font-weight:600">61%</td><td><span class="b br" style="font-size:9px">5 DAYS</span></td><td><button class="btn btnp bsm">Nudge 📲</button></td></tr>
+    </tbody></table></div>
+  </div>
+
+  <div id="t-quiz" style="display:none">
+    <div class="g2c">
+      <div class="card">
+        <div class="card-title">Build Quiz</div>
+        <div class="fg" style="margin-bottom:10px"><label>Quiz Title</label><input placeholder="e.g. Unit 7 — Grammar Check"></div>
+        <div style="background:var(--bg3);border:1px solid var(--bor);border-radius:8px;padding:12px;margin-bottom:10px">
+          <div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--g2);margin-bottom:8px">Q1</div>
+          <input placeholder="Question text..." style="margin-bottom:7px">
+          <input placeholder="Option A" style="margin-bottom:5px">
+          <input placeholder="Option B" style="margin-bottom:5px">
+          <input placeholder="Option C" style="margin-bottom:5px">
+          <div style="display:flex;align-items:center;gap:9px;margin-top:7px"><span style="font-size:11px;color:var(--tx2)">Correct answer:</span><select style="width:100px"><option>A</option><option>B</option><option>C</option></select></div>
+        </div>
+        <button class="btn btng" style="width:100%;justify-content:center;margin-bottom:7px">+ Add Question</button>
+        <button class="btn btnp" style="width:100%;justify-content:center">Save & Attach to Lesson</button>
+      </div>
+      <div class="card">
+        <div class="card-title">Quiz Settings</div>
+        <div class="fr">
+          <div class="fg"><label>Time Limit (min)</label><input type="number" value="15"></div>
+          <div class="fg"><label>Pass Score (%)</label><input type="number" value="70"></div>
+          <div class="fg full"><label>Attach to Lesson</label><select><option>Lesson 7: Conditionals</option><option>Lesson 6: Relative Clauses</option></select></div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px"><span style="font-size:12px;color:var(--tx2)">Randomise question order</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px"><span style="font-size:12px;color:var(--tx2)">Show score immediately</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:12px;color:var(--tx2)">Require pass to unlock next lesson</span><div class="tog" onclick="this.classList.toggle('on')"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="t-analytics" style="display:none">
+    <div class="g2c" style="margin-bottom:14px">
+      <div class="card">
+        <div class="card-title">Completion Rate Over Time</div>
+        <div class="chart-box" style="height:160px"><canvas id="chartCompletion"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Top Performing Students</div>
+        <div class="perf-row"><div class="perf-rank">🥇</div><div class="perf-av">LT</div><div class="perf-info"><div class="perf-name">Layla Tarek</div><div class="perf-meta">IELTS Prep · 91% complete</div></div><div class="perf-num">92%</div></div>
+        <div class="perf-row"><div class="perf-rank">🥈</div><div class="perf-av" style="color:var(--g2)">SA</div><div class="perf-info"><div class="perf-name">Sara Ahmed</div><div class="perf-meta">English Biz · 72% complete</div></div><div class="perf-num">84%</div></div>
+        <div class="perf-row"><div class="perf-rank">🥉</div><div class="perf-av" style="color:var(--yw)">YA</div><div class="perf-info"><div class="perf-name">Yousef Al-Rashidi</div><div class="perf-meta">Arabic Pro · 45% complete</div></div><div class="perf-num">77%</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Students Needing Attention <span>last active 5+ days ago</span></div>
+      <div class="tl">
+        <div class="tli"><div style="position:relative"><div class="tld" style="background:var(--re)"></div><div class="tll"></div></div><div><div class="tlt"><strong>Ahmed Rashid</strong> — 5 days inactive, only 33% complete. Consider sending a nudge.</div><div class="tlts">English Business · Last seen Mar 20</div></div></div>
+        <div class="tli"><div style="position:relative"><div class="tld" style="background:var(--yw)"></div></div><div><div class="tlt"><strong>Khalid Saleh</strong> — 3 days inactive, stuck on Unit 4 quiz. Scored 48% (below pass).</div><div class="tlts">IELTS Prep · Last seen Mar 22</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     MARKETER — LEAD CRM
+════════════════════════════════════════ -->
+<div class="pg" id="p-leads">
+  <div class="ph">
+    <div><div class="pt">Lead Management CRM</div><div class="ps">whatsapp pipeline · bot qualified · ready to close</div></div>
+    <div class="ph-actions">
+      <button class="btn btng bsm" onclick="gP('p-bulk')">📤 Broadcast</button>
+      <button class="btn btnt bsm" onclick="gP('p-bot')">🤖 Bot</button>
+      <button class="btn btnp bsm" onclick="showM('mlead')">+ Add Lead</button>
+    </div>
+  </div>
+  <div class="srow s5">
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Total Leads</div><div class="sv b">287</div></div><div class="sc-icon sc-ico-b">📥</div></div><div class="sd up">↑ 34 this week</div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Hot 🔥</div><div class="sv r">42</div></div><div class="sc-icon sc-ico-r">🔥</div></div><div class="sd">follow-up now</div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Warm</div><div class="sv a">89</div></div><div class="sc-icon sc-ico-y">🌡️</div></div><div class="sd">nurturing</div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Converted ✓</div><div class="sv g">89</div></div><div class="sc-icon sc-ico-g">✅</div></div><div class="sd up">31% conv. rate</div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Avg Response</div><div class="sv g">4m</div></div><div class="sc-icon sc-ico-t">⚡</div></div><div class="sd up">↑ faster than last wk</div></div>
+  </div>
+
+  <div class="g2c" style="margin-bottom:14px">
+    <div class="card">
+      <div class="card-title">Lead Volume — Last 7 Days</div>
+      <div class="chart-box" style="height:150px"><canvas id="chartLeadVolume"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Conversion Rate by Course Interest</div>
+      <div class="chart-box" style="height:150px"><canvas id="chartConvByCourse"></canvas></div>
+    </div>
+  </div>
+
+  <!-- KANBAN PIPELINE -->
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-title">Pipeline — Kanban View <span>DRAG TO MOVE (DEMO)</span></div>
+    <div class="kanban">
+      <div class="kan-col">
+        <div class="kan-head" style="color:var(--bl)">📥 NEW <span class="b bn">68</span></div>
+        <div class="kan-card"><div class="kc-name">Fatima Hassan</div><div class="kc-course">IELTS Prep</div><div class="kc-score" style="color:var(--re)">🔥 Score: 87/100</div><div class="kc-time">2 min ago</div></div>
+        <div class="kan-card"><div class="kc-name">Khalid Nasser</div><div class="kc-course">English Biz</div><div class="kc-score" style="color:var(--yw)">Score: 62/100</div><div class="kc-time">1 hr ago</div></div>
+        <div class="kan-card"><div class="kc-name">Reem Abdullah</div><div class="kc-course">Arabic Pro</div><div class="kc-score" style="color:var(--yw)">Score: 71/100</div><div class="kc-time">3 hrs ago</div></div>
+      </div>
+      <div class="kan-col">
+        <div class="kan-head" style="color:var(--yw)">💬 CONTACTED <span class="b bp">45</span></div>
+        <div class="kan-card"><div class="kc-name">Yousef Al-Rashidi</div><div class="kc-course">English Biz</div><div class="kc-score" style="color:var(--yw)">Score: 65/100</div><div class="kc-time">Yesterday</div></div>
+        <div class="kan-card"><div class="kc-name">Nora Hamad</div><div class="kc-course">IELTS Prep</div><div class="kc-score" style="color:var(--g2)">Score: 78/100</div><div class="kc-time">2 days ago</div></div>
+      </div>
+      <div class="kan-col">
+        <div class="kan-head" style="color:var(--pu)">🤝 INTERESTED <span class="b bq">31</span></div>
+        <div class="kan-card"><div class="kc-name">Sara Mansour</div><div class="kc-course">French 101</div><div class="kc-score" style="color:var(--g2)">Score: 82/100</div><div class="kc-time">Mar 23</div></div>
+      </div>
+      <div class="kan-col">
+        <div class="kan-head" style="color:var(--or)">💰 NEGOTIATING <span class="b bo">18</span></div>
+        <div class="kan-card"><div class="kc-name">Ahmed Ziad</div><div class="kc-course">Arabic Pro</div><div class="kc-score" style="color:var(--or)">Asking for discount</div><div class="kc-time">Mar 22</div></div>
+        <div class="kan-card"><div class="kc-name">Mona Faris</div><div class="kc-course">IELTS Prep</div><div class="kc-score" style="color:var(--or)">Instalment request</div><div class="kc-time">Mar 21</div></div>
+      </div>
+      <div class="kan-col">
+        <div class="kan-head" style="color:var(--g2)">✅ ENROLLED <span class="b bg">89</span></div>
+        <div class="kan-card" style="border-color:var(--bor3)"><div class="kc-name">Nora Mohammed</div><div class="kc-course">Arabic Writing</div><div class="kc-score" style="color:var(--g2)">✓ SAR 999 paid</div><div class="kc-time">Mar 24</div></div>
+        <div class="kan-card" style="border-color:var(--bor3)"><div class="kc-name">Layla Tarek</div><div class="kc-course">English Biz</div><div class="kc-score" style="color:var(--g2)">✓ SAR 1,499 paid</div><div class="kc-time">Mar 23</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEAD TABLE -->
+  <div class="tw"><div class="th2"><span class="tt">All Leads</span><div class="ta"><input placeholder="Search..." style="width:140px"><select style="font-size:11px"><option>All Status</option><option>Hot</option><option>Warm</option><option>Cold</option><option>Converted</option></select></div></div>
+  <table><thead><tr><th>Lead</th><th>Phone</th><th>Interested In</th><th>Bot Score</th><th>Status</th><th>Last Contact</th><th></th></tr></thead>
+  <tbody>
+    <tr><td><div style="display:flex;align-items:center;gap:8px"><div class="lav" style="width:26px;height:26px;font-size:9px">FH</div>Fatima Hassan</div></td><td style="font-family:'Space Mono',monospace;font-size:10px;color:var(--tx2)">+966 55 123 4567</td><td>IELTS Prep</td><td><span style="font-family:'Space Mono',monospace;font-size:11px;color:var(--re);font-weight:700">87/100</span></td><td><span class="b br">HOT 🔥</span></td><td style="font-size:11px;color:var(--tx3)">2 min ago</td><td><button class="btn btnwa bxs">WhatsApp</button></td></tr>
+    <tr><td><div style="display:flex;align-items:center;gap:8px"><div class="lav" style="width:26px;height:26px;font-size:9px;color:var(--bl)">YA</div>Yousef Al-Rashidi</div></td><td style="font-family:'Space Mono',monospace;font-size:10px;color:var(--tx2)">+966 50 987 6543</td><td>English Business</td><td><span style="font-family:'Space Mono',monospace;font-size:11px;color:var(--yw);font-weight:700">65/100</span></td><td><span class="b bp">WARM</span></td><td style="font-size:11px;color:var(--tx3)">Yesterday</td><td><button class="btn btng bsm">WhatsApp</button></td></tr>
+    <tr><td><div style="display:flex;align-items:center;gap:8px"><div class="lav" style="width:26px;height:26px;font-size:9px;color:var(--g2)">NM</div>Nora Mohammed</div></td><td style="font-family:'Space Mono',monospace;font-size:10px;color:var(--tx2)">+966 56 234 5678</td><td>Arabic Writing</td><td><span style="font-family:'Space Mono',monospace;font-size:11px;color:var(--g2);font-weight:700">91/100</span></td><td><span class="b bg">CONVERTED ✓</span></td><td style="font-size:11px;color:var(--tx3)">Mar 24</td><td><button class="btn btng bsm">View</button></td></tr>
+    <tr><td><div style="display:flex;align-items:center;gap:8px"><div class="lav" style="width:26px;height:26px;font-size:9px;color:var(--tx3)">KS</div>Khalid Saleh</div></td><td style="font-family:'Space Mono',monospace;font-size:10px;color:var(--tx2)">+966 59 876 5432</td><td>IELTS Prep</td><td><span style="font-family:'Space Mono',monospace;font-size:11px;color:var(--tx3);font-weight:700">23/100</span></td><td><span class="b bc">COLD ❄️</span></td><td style="font-size:11px;color:var(--tx3)">5 days ago</td><td><button class="btn btnt bsm">Re-engage</button></td></tr>
+  </tbody></table></div>
+</div>
+
+<!-- ════════════════════════════════════════
+     MARKETER — WHATSAPP INBOX
+════════════════════════════════════════ -->
+<div class="pg" id="p-inbox">
+  <div class="ph">
+    <div><div class="pt">WhatsApp Inbox</div><div class="ps">all lead conversations · assign · label · reply</div></div>
+    <div class="ph-actions"><span class="b br">5 URGENT</span><span class="b bp" style="margin-left:4px">12 UNREAD</span></div>
+  </div>
+  <div class="inbox-wrap">
+    <div class="inbox-list">
+      <div class="inbox-search"><input placeholder="Search conversations..." id="inboxSearch"></div>
+      <div class="inbox-item active unread" onclick="selectChat(this,'Fatima Hassan','FH','HOT')">
+        <div class="ii-av" style="background:rgba(255,107,107,.15);color:var(--re)">FH<div class="ii-online"></div></div>
+        <div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between"><span class="ii-name">Fatima Hassan</span><span class="ii-time">2m</span></div><div class="ii-preview">I'm interested in the IELTS course...</div></div>
+      </div>
+      <div class="inbox-item unread" onclick="selectChat(this,'Yousef Al-Rashidi','YA','WARM')">
+        <div class="ii-av" style="color:var(--bl)">YA</div>
+        <div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between"><span class="ii-name">Yousef Al-Rashidi</span><span class="ii-time">1h</span></div><div class="ii-preview">Can I get a discount if I pay now?</div></div>
+      </div>
+      <div class="inbox-item" onclick="selectChat(this,'Nora Hamad','NH','WARM')">
+        <div class="ii-av" style="color:var(--pu)">NH</div>
+        <div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between"><span class="ii-name">Nora Hamad</span><span class="ii-time">3h</span></div><div class="ii-preview">When does the next batch start?</div></div>
+      </div>
+      <div class="inbox-item" onclick="selectChat(this,'Ahmed Ziad','AZ','NEGOT')">
+        <div class="ii-av" style="color:var(--or)">AZ</div>
+        <div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between"><span class="ii-name">Ahmed Ziad</span><span class="ii-time">4h</span></div><div class="ii-preview">Is instalment payment possible?</div></div>
+      </div>
+      <div class="inbox-item" onclick="selectChat(this,'Mona Faris','MF','COLD')">
+        <div class="ii-av" style="color:var(--tx3)">MF</div>
+        <div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between"><span class="ii-name">Mona Faris</span><span class="ii-time">1d</span></div><div class="ii-preview">Okay I'll think about it...</div></div>
+      </div>
+    </div>
+    <div class="inbox-chat">
+      <div class="chat-header">
+        <div style="display:flex;align-items:center;gap:9px">
+          <div class="ii-av" style="width:32px;height:32px;border-radius:50%;background:rgba(255,107,107,.15);color:var(--re);font-size:10px" id="chatAvatar">FH</div>
+          <div><div style="font-size:13px;font-weight:600;color:var(--tx)" id="chatName">Fatima Hassan</div><div style="font-size:10px;color:var(--g2);font-family:'Space Mono',monospace" id="chatStatus">🔥 HOT LEAD · Score 87/100</div></div>
+        </div>
+        <div style="display:flex;gap:7px">
+          <button class="btn btnwa bsm">📲 Send Offer</button>
+          <select style="font-size:11px;width:120px"><option>🔥 Hot</option><option>🌡️ Warm</option><option>❄️ Cold</option><option>✅ Converted</option></select>
+        </div>
+      </div>
+      <div class="chat-msgs" id="inboxChatMsgs">
+        <div class="wb wi">👋 Hi! I saw your ad. I'm interested in the IELTS course. Can you tell me more?<div class="wt">Fatima · 10:21 AM</div></div>
+        <div class="wb wo">Of course! Our IELTS Prep Pro is our most popular course. It's 45 sessions over 3 months with guaranteed score improvement. Interested?<div class="wt">You · 10:24 AM</div></div>
+        <div class="wb wi">Yes! How much is it?<div class="wt">Fatima · 10:26 AM</div></div>
+        <div class="wb wo">It's SAR 1,899 — and we currently have a Ramadan offer: 10% off if you enrol this week. That's SAR 1,709 total 🎁<div class="wt">You · 10:27 AM</div></div>
+        <div class="wb wi">I'm interested in the IELTS course, can I pay in instalments?<div class="wt">Fatima · 10:31 AM</div></div>
+      </div>
+      <div class="chat-input-area">
+        <div style="display:flex;flex-direction:column;gap:6px;flex:1">
+          <div style="display:flex;gap:5px;flex-wrap:wrap">
+            <div class="mc-quick-btn" onclick="fillInboxMsg('Our IELTS Prep Pro is SAR 1,899. Ramadan offer: 10% off this week 🎁')">💰 Price</div>
+            <div class="mc-quick-btn" onclick="fillInboxMsg('Yes! We offer 3-month instalment plan: SAR 650/month 📅')">📅 Instalment</div>
+            <div class="mc-quick-btn" onclick="fillInboxMsg('Next batch starts April 1st. Limited seats available! 🚀')">📅 Start Date</div>
+            <div class="mc-quick-btn" onclick="fillInboxMsg('I\\'ll send you the enrolment link now: forlingo.sa/enrol 🔗')">🔗 Enrol Link</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <input placeholder="Type a message..." id="inboxInput" onkeydown="if(event.key==='Enter')sendInboxMsg()" style="flex:1">
+            <button class="btn btnwa bsm" onclick="sendInboxMsg()">Send ↑</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     MARKETER — BOT AUTOMATION
+════════════════════════════════════════ -->
+<div class="pg" id="p-bot">
+  <div class="ph"><div><div class="pt">AI Bot Automation</div><div class="ps">24/7 qualification · auto follow-up · lead scoring</div></div></div>
+  <div class="srow s4">
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Bot Chats Today</div><div class="sv b">47</div></div><div class="sc-icon sc-ico-b">🤖</div></div><div class="sd up">↑ 12 vs yesterday</div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Qualified Hot</div><div class="sv r">14</div></div><div class="sc-icon sc-ico-r">🔥</div></div><div class="sd">handed to marketer</div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Bot Conv. Rate</div><div class="sv g">29%</div></div><div class="sc-icon sc-ico-g">📊</div></div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Avg Score Given</div><div class="sv a">61</div></div><div class="sc-icon sc-ico-y">⭐</div></div></div>
+  </div>
+  <div class="g2c">
+    <div>
+      <div class="wa-bg" style="margin-bottom:14px">
+        <div class="wa-head">
+          <div class="wa-avatar">🤖</div>
+          <div><div class="wa-name">Lingo — AI Bot</div><div class="wa-status">24/7 · Auto-qualifying leads</div></div>
+          <div style="margin-left:auto"><span class="b bg" style="font-size:9px">● ONLINE</span></div>
+        </div>
+        <div class="wac" id="botChat">
+          <div class="wb wi">👋 Ahlan! I'm Lingo, your Forlingo guide. Which course are you interested in?<div class="wt">BOT · now</div></div>
+          <div class="wb wo">I want to learn English for business<div class="wt">LEAD · 10:32</div></div>
+          <div class="wb wi">Excellent! We have Business English (SAR 1,499) and IELTS Prep Pro (SAR 1,899). Which fits your goal? 🎯<div class="wt">BOT · 10:32</div></div>
+          <div class="wb wo">Business English<div class="wt">LEAD · 10:33</div></div>
+          <div class="wb wi">Great! What's your current English level?<div class="wt">BOT · 10:33</div></div>
+          <div class="wscore">🤖 AUTO-SCORING IN PROGRESS... SCORE: 74/100 → HOT LEAD THRESHOLD</div>
+        </div>
+        <div style="display:flex;gap:8px"><input id="botInput" placeholder="Simulate lead reply..." onkeydown="if(event.key==='Enter')sBotMsg()"><button class="btn btnwa bsm" onclick="sBotMsg()">Send</button></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Bot Qualification Questions</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="padding:9px 12px;background:var(--bg3);border:1px solid var(--bor);border-radius:6px;font-size:11px;display:flex;align-items:center;gap:8px"><span style="font-family:'Space Mono',monospace;font-size:9px;color:var(--g2);background:var(--gdim);border:1px solid var(--bor3);border-radius:3px;padding:1px 7px">Q1</span>Which course are you interested in?</div>
+          <div style="padding:9px 12px;background:var(--bg3);border:1px solid var(--bor);border-radius:6px;font-size:11px;display:flex;align-items:center;gap:8px"><span style="font-family:'Space Mono',monospace;font-size:9px;color:var(--g2);background:var(--gdim);border:1px solid var(--bor3);border-radius:3px;padding:1px 7px">Q2</span>What is your current level?</div>
+          <div style="padding:9px 12px;background:var(--bg3);border:1px solid var(--bor);border-radius:6px;font-size:11px;display:flex;align-items:center;gap:8px"><span style="font-family:'Space Mono',monospace;font-size:9px;color:var(--g2);background:var(--gdim);border:1px solid var(--bor3);border-radius:3px;padding:1px 7px">Q3</span>What is your target score or goal?</div>
+          <div style="padding:9px 12px;background:var(--bg3);border:1px solid var(--bor);border-radius:6px;font-size:11px;display:flex;align-items:center;gap:8px"><span style="font-family:'Space Mono',monospace;font-size:9px;color:var(--g2);background:var(--gdim);border:1px solid var(--bor3);border-radius:3px;padding:1px 7px">Q4</span>When do you want to start?</div>
+          <div style="padding:9px 12px;background:var(--bg3);border:1px solid var(--bor);border-radius:6px;font-size:11px;display:flex;align-items:center;gap:8px"><span style="font-family:'Space Mono',monospace;font-size:9px;color:var(--g2);background:var(--gdim);border:1px solid var(--bor3);border-radius:3px;padding:1px 7px">Q5</span>What is your budget range?</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-title">Bot Configuration</div>
+        <div class="fr">
+          <div class="fg"><label>Hot Threshold (score)</label><input type="number" value="70"></div>
+          <div class="fg"><label>Cold Threshold (score)</label><input type="number" value="30"></div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px"><span style="font-size:12px;color:var(--tx2)">Auto-assign hot leads to marketer</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px"><span style="font-size:12px;color:var(--tx2)">WhatsApp alert marketer on hot lead</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px"><span style="font-size:12px;color:var(--tx2)">Auto follow-up if lead goes silent 24h</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><span style="font-size:12px;color:var(--tx2)">Auto follow-up Day 3 and Day 7</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+        <button class="btn btnp" style="width:100%;justify-content:center">Save Bot Settings</button>
+      </div>
+      <div class="card">
+        <div class="card-title">Lead Score Breakdown</div>
+        <div class="chart-box" style="height:150px"><canvas id="chartLeadScore"></canvas></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     MARKETER — CAMPAIGN BUILDER
+════════════════════════════════════════ -->
+<div class="pg" id="p-campaign">
+  <div class="ph">
+    <div><div class="pt">Campaign Builder</div><div class="ps">multi-step sequences · auto send · whatsapp drip</div></div>
+    <button class="btn btnp bsm">+ New Campaign</button>
+  </div>
+  <div class="srow s4">
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Active Campaigns</div><div class="sv b">4</div></div><div class="sc-icon sc-ico-b">📣</div></div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Messages Sent</div><div class="sv g">1,247</div></div><div class="sc-icon sc-ico-g">📤</div></div><div class="sd">this month</div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Avg Open Rate</div><div class="sv g">72%</div></div><div class="sc-icon sc-ico-t">📬</div></div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Conversions</div><div class="sv a">34</div></div><div class="sc-icon sc-ico-y">✅</div></div><div class="sd up">from campaigns</div></div>
+  </div>
+  <div class="g2c">
+    <div class="card">
+      <div class="card-title">Active Campaign — "IELTS Drip 7-Day" <span class="b bg">RUNNING</span></div>
+      <div style="font-size:11px;color:var(--tx2);margin-bottom:14px">Audience: 42 hot leads · Started Mar 18 · Triggered: Bot score ≥ 70</div>
+      <div class="camp-steps">
+        <div class="camp-step"><div class="cs-day">DAY 1</div><div class="cs-ico">👋</div><div class="cs-body"><div class="cs-title">Welcome + Course Overview</div><div class="cs-sub">Sent to 42 · 89% delivered · 71% read</div></div><span class="b bg">SENT</span></div>
+        <div class="camp-step"><div class="cs-day">DAY 3</div><div class="cs-ico">🎯</div><div class="cs-body"><div class="cs-title">Success Story + Social Proof</div><div class="cs-sub">Sent to 37 · 94% delivered · 68% read</div></div><span class="b bg">SENT</span></div>
+        <div class="camp-step" style="border-color:var(--bor3)"><div class="cs-day">DAY 5</div><div class="cs-ico">💰</div><div class="cs-body"><div class="cs-title">Special Offer — 10% Off This Week</div><div class="cs-sub">Sending tomorrow to 34 leads</div></div><span class="b bp">PENDING</span></div>
+        <div class="camp-step"><div class="cs-day">DAY 7</div><div class="cs-ico">⏰</div><div class="cs-body"><div class="cs-title">Final Nudge — Offer Expires Today</div><div class="cs-sub">Scheduled · conditional on non-convert</div></div><span class="b bc">SCHEDULED</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Build New Campaign</div>
+      <div class="fr">
+        <div class="fg full"><label>Campaign Name</label><input placeholder="e.g. Ramadan Arabic Offer"></div>
+        <div class="fg full"><label>Audience</label><select><option>Hot Leads (42)</option><option>Warm Leads (89)</option><option>Cold Leads (98)</option><option>All Students (312)</option><option>Custom Segment</option></select></div>
+        <div class="fg"><label>Trigger</label><select><option>Bot Score ≥ 70</option><option>Manual Add</option><option>No reply 24h</option><option>On Enrolment</option></select></div>
+        <div class="fg"><label>Channel</label><select><option>WhatsApp</option><option>WhatsApp + SMS</option></select></div>
+      </div>
+      <div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--tx3);letter-spacing:.08em;margin-bottom:9px;text-transform:uppercase">Sequence Steps</div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px">
+        <div style="display:flex;gap:8px;align-items:center"><select style="width:90px;font-size:11px"><option>Day 1</option><option>Day 2</option><option>Day 3</option></select><input placeholder="Step message..." style="flex:1;font-size:11px"></div>
+        <div style="display:flex;gap:8px;align-items:center"><select style="width:90px;font-size:11px"><option>Day 3</option><option>Day 5</option></select><input placeholder="Follow-up message..." style="flex:1;font-size:11px"></div>
+        <div style="display:flex;gap:8px;align-items:center"><select style="width:90px;font-size:11px"><option>Day 7</option></select><input placeholder="Final offer message..." style="flex:1;font-size:11px"></div>
+      </div>
+      <button class="btn btnp" style="width:100%;justify-content:center">Launch Campaign 🚀</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     MARKETER — BULK BROADCAST
+════════════════════════════════════════ -->
+<div class="pg" id="p-bulk">
+  <div class="ph"><div><div class="pt">WhatsApp Broadcast</div><div class="ps">bulk messaging · templates · scheduled sends</div></div></div>
+  <div class="g2c">
+    <div>
+      <div class="wa-bg" style="margin-bottom:14px">
+        <div class="wa-head">
+          <div class="wa-avatar">📤</div>
+          <div><div class="wa-name">Bulk Messaging</div><div class="wa-status">WhatsApp Business API</div></div>
+        </div>
+        <div class="fg" style="margin-bottom:9px"><label>Audience Segment</label><select style="background:rgba(255,255,255,.06);border-color:rgba(37,211,102,.2);color:var(--tx)"><option>All Students (312)</option><option>Hot Leads (42)</option><option>Warm Leads (89)</option><option>Cold Leads (98)</option><option>Custom Segment</option></select></div>
+        <div class="fg" style="margin-bottom:9px"><label>Message</label><textarea rows="4" id="wamsg" style="background:rgba(255,255,255,.06);border-color:rgba(37,211,102,.2)" placeholder="Hi {{name}}! Use {{name}} and {{course}} for personalisation..."></textarea></div>
+        <div style="font-family:'Space Mono',monospace;font-size:9px;color:rgba(37,211,102,.6);margin-bottom:7px;letter-spacing:.06em">QUICK TEMPLATES</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">
+          <div style="background:rgba(255,255,255,.06);border:1px solid rgba(37,211,102,.15);border-radius:4px;padding:4px 9px;font-size:10px;cursor:pointer;color:rgba(37,211,102,.8)" onclick="fillWA('reminder')">📅 Class Reminder</div>
+          <div style="background:rgba(255,255,255,.06);border:1px solid rgba(37,211,102,.15);border-radius:4px;padding:4px 9px;font-size:10px;cursor:pointer;color:rgba(37,211,102,.8)" onclick="fillWA('offer')">🎁 Special Offer</div>
+          <div style="background:rgba(255,255,255,.06);border:1px solid rgba(37,211,102,.15);border-radius:4px;padding:4px 9px;font-size:10px;cursor:pointer;color:rgba(37,211,102,.8)" onclick="fillWA('followup')">💬 Follow-up</div>
+          <div style="background:rgba(255,255,255,.06);border:1px solid rgba(37,211,102,.15);border-radius:4px;padding:4px 9px;font-size:10px;cursor:pointer;color:rgba(37,211,102,.8)" onclick="fillWA('cert')">🏆 Cert Ready</div>
+          <div style="background:rgba(255,255,255,.06);border:1px solid rgba(37,211,102,.15);border-radius:4px;padding:4px 9px;font-size:10px;cursor:pointer;color:rgba(37,211,102,.8)" onclick="fillWA('reengage')">🔄 Re-engage</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn" style="background:#128c7e;color:#fff;font-weight:700;flex:1;justify-content:center" onclick="alert('Broadcast scheduled for 312 recipients!')">Send Now →</button>
+          <button class="btn btng bsm">Schedule</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Broadcast Stats (March)</div>
+        <div class="srow s3" style="margin-bottom:0">
+          <div class="sc" style="text-align:center"><div class="sl2">Sent</div><div class="sv g" style="font-size:20px">1,247</div></div>
+          <div class="sc" style="text-align:center"><div class="sl2">Delivered</div><div class="sv g" style="font-size:20px">94%</div></div>
+          <div class="sc" style="text-align:center"><div class="sl2">Opened</div><div class="sv b" style="font-size:20px">67%</div></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-title">Template Library</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div class="mc-bubble"><strong>📅 Class Reminder</strong><br>"Hi {{name}}! Your {{course}} session is tomorrow at 7PM. Don't forget! 📚"<div style="margin-top:6px;display:flex;gap:5px"><span class="b bg" style="font-size:9px">ENROLLMENT</span></div></div>
+          <div class="mc-bubble"><strong>🎁 Ramadan Offer</strong><br>"Hi {{name}}! Ramadan Mubarak 🌙 Special 20% off on all courses this week only!"<div style="margin-top:6px;display:flex;gap:5px"><span class="b bp" style="font-size:9px">OFFERS</span></div></div>
+          <div class="mc-bubble"><strong>🔄 Re-engagement</strong><br>"Hi {{name}}! We noticed you haven't visited recently. We miss you! Here's 10% off to come back 💚"<div style="margin-top:6px;display:flex;gap:5px"><span class="b bn" style="font-size:9px">WIN-BACK</span></div></div>
+          <div class="mc-bubble"><strong>🏆 Certificate Ready</strong><br>"Congratulations {{name}}! 🎉 Your {{course}} certificate is ready. Download it here: [link]"<div style="margin-top:6px;display:flex;gap:5px"><span class="b bg" style="font-size:9px">CELEBRATION</span></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Scheduled Broadcasts</div>
+        <div class="tl">
+          <div class="tli"><div style="position:relative"><div class="tld" style="background:var(--yw)"></div><div class="tll"></div></div><div><div class="tlt"><strong>Class Reminder — English Business</strong></div><div class="tlts">Tomorrow 6:00 PM · 148 students</div></div></div>
+          <div class="tli"><div style="position:relative"><div class="tld" style="background:var(--yw)"></div><div class="tll"></div></div><div><div class="tlt"><strong>Follow-up — Cold Leads Batch</strong></div><div class="tlts">Friday 10:00 AM · 98 cold leads</div></div></div>
+          <div class="tli"><div style="position:relative"><div class="tld"></div></div><div><div class="tlt"><strong>Ramadan Offer Blast</strong> ✓ Sent</div><div class="tlts">3 days ago · 287 leads · Delivered</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     MARKETER — LEAD SCORING DASHBOARD
+════════════════════════════════════════ -->
+<div class="pg" id="p-scoring">
+  <div class="ph"><div><div class="pt">Lead Scoring Dashboard</div><div class="ps">ai-powered scoring · manual override · stage management</div></div></div>
+  <div class="g2c" style="margin-bottom:14px">
+    <div class="card">
+      <div class="card-title">Score Distribution</div>
+      <div class="chart-box" style="height:180px"><canvas id="chartScoreDist"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Score Factors Breakdown</div>
+      <div class="pbw">
+        <div class="pbr"><span class="pbl">COURSE FIT</span><div class="pbk"><div class="pbf pf-g" style="width:90%">+30pts</div></div></div>
+        <div class="pbr"><span class="pbl">BUDGET MATCH</span><div class="pbk"><div class="pbf pf-b" style="width:75%">+25pts</div></div></div>
+        <div class="pbr"><span class="pbl">URGENCY</span><div class="pbk"><div class="pbf pf-y" style="width:60%">+20pts</div></div></div>
+        <div class="pbr"><span class="pbl">ENGAGEMENT</span><div class="pbk"><div class="pbf pf-p" style="width:45%">+15pts</div></div></div>
+        <div class="pbr"><span class="pbl">RESPONSE TIME</span><div class="pbk"><div class="pbf pf-t" style="width:30%">+10pts</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="tw"><div class="th2"><span class="tt">Leads with Manual Score Override</span></div>
+  <table><thead><tr><th>Lead</th><th>Bot Score</th><th>Manual Override</th><th>Final Score</th><th>Stage</th><th>Action</th></tr></thead>
+  <tbody>
+    <tr><td>Fatima Hassan</td><td><span style="color:var(--g2);font-family:'Space Mono',monospace">87</span></td><td><input type="number" value="87" style="width:60px;padding:3px 6px;font-size:11px"></td><td><strong style="color:var(--re)">87 🔥</strong></td><td><select style="font-size:11px"><option selected>Hot</option><option>Warm</option><option>Cold</option></select></td><td><button class="btn btnp bxs">Save</button></td></tr>
+    <tr><td>Yousef Al-Rashidi</td><td><span style="color:var(--yw);font-family:'Space Mono',monospace">65</span></td><td><input type="number" value="75" style="width:60px;padding:3px 6px;font-size:11px"></td><td><strong style="color:var(--yw)">75 🌡️</strong></td><td><select style="font-size:11px"><option>Hot</option><option selected>Warm</option><option>Cold</option></select></td><td><button class="btn btnp bxs">Save</button></td></tr>
+    <tr><td>Khalid Saleh</td><td><span style="color:var(--tx3);font-family:'Space Mono',monospace">23</span></td><td><input type="number" value="23" style="width:60px;padding:3px 6px;font-size:11px"></td><td><strong style="color:var(--tx3)">23 ❄️</strong></td><td><select style="font-size:11px"><option>Hot</option><option>Warm</option><option selected>Cold</option></select></td><td><button class="btn btnt bxs">Re-engage</button></td></tr>
+  </tbody></table></div>
+</div>
+
+<!-- ════════════════════════════════════════
+     MARKETER — ROI TRACKER
+════════════════════════════════════════ -->
+<div class="pg" id="p-roi">
+  <div class="ph"><div><div class="pt">Source ROI Tracker</div><div class="ps">whatsapp campaigns · cost per lead · cost per enrollment</div></div></div>
+  <div class="srow s4">
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Total Ad Spend</div><div class="sv a">SAR 8.4K</div></div><div class="sc-icon sc-ico-y">💸</div></div><div class="sd">this month</div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Revenue from Leads</div><div class="sv g">SAR 67K</div></div><div class="sc-icon sc-ico-g">💰</div></div><div class="sd up">8x ROAS</div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Cost Per Lead</div><div class="sv b">SAR 29</div></div><div class="sc-icon sc-ico-b">📥</div></div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Cost Per Enrolment</div><div class="sv g">SAR 94</div></div><div class="sc-icon sc-ico-t">🎓</div></div></div>
+  </div>
+  <div class="g2c" style="margin-bottom:14px">
+    <div class="card">
+      <div class="card-title">Revenue by Lead Source</div>
+      <div class="chart-box" style="height:180px"><canvas id="chartROI"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">ROAS by Campaign</div>
+      <div class="chart-box" style="height:180px"><canvas id="chartROAS"></canvas></div>
+    </div>
+  </div>
+  <div class="tw"><div class="th2"><span class="tt">Source Breakdown</span></div>
+  <table><thead><tr><th>Source / Campaign</th><th>Leads</th><th>Spend (SAR)</th><th>CPL</th><th>Converted</th><th>Revenue</th><th>ROAS</th></tr></thead>
+  <tbody>
+    <tr><td>📲 WA Campaign — IELTS Offer</td><td>112</td><td>2,100</td><td>SAR 19</td><td>38</td><td style="color:var(--g2);font-weight:600">SAR 28,500</td><td><span class="b bg">13.6x</span></td></tr>
+    <tr><td>📲 WA Campaign — Arabic Writing</td><td>87</td><td>1,800</td><td>SAR 21</td><td>24</td><td style="color:var(--g2);font-weight:600">SAR 18,200</td><td><span class="b bg">10.1x</span></td></tr>
+    <tr><td>📲 WA Campaign — English Biz</td><td>54</td><td>2,400</td><td>SAR 44</td><td>18</td><td style="color:var(--g2);font-weight:600">SAR 13,500</td><td><span class="b bp">5.6x</span></td></tr>
+    <tr><td>🔗 Referral Program</td><td>34</td><td>800</td><td>SAR 24</td><td>9</td><td style="color:var(--g2);font-weight:600">SAR 7,200</td><td><span class="b bg">9.0x</span></td></tr>
+  </tbody></table></div>
+</div>
+
+<!-- ════════════════════════════════════════
+     MARKETER — OFFERS & COUPONS
+════════════════════════════════════════ -->
+<div class="pg" id="p-offers">
+  <div class="ph"><div><div class="pt">Offers & Coupon Engine</div><div class="ps">discount codes · time-limited offers · audience targeting</div></div><button class="btn btnp bsm">+ New Offer</button></div>
+  <div class="srow s4">
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Active Offers</div><div class="sv b">5</div></div><div class="sc-icon sc-ico-b">🎁</div></div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Coupons Used</div><div class="sv g">147</div></div><div class="sc-icon sc-ico-g">🎫</div></div><div class="sd">this month</div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Revenue via Coupons</div><div class="sv g">SAR 34K</div></div><div class="sc-icon sc-ico-t">💰</div></div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Avg Discount</div><div class="sv a">14%</div></div><div class="sc-icon sc-ico-y">📉</div></div></div>
+  </div>
+  <div class="g2c">
+    <div>
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-title">Active Offers</div>
+        <div class="coup-card"><div class="coup-code">RAMADAN25</div><div class="coup-info"><div class="coup-disc">25% OFF</div><div class="coup-meta">All courses · Expires Mar 30 · Used 89x</div></div><span class="b bg">ACTIVE</span></div>
+        <div class="coup-card"><div class="coup-code">IELTS10</div><div class="coup-info"><div class="coup-disc">10% OFF</div><div class="coup-meta">IELTS Prep only · No expiry · Used 34x</div></div><span class="b bg">ACTIVE</span></div>
+        <div class="coup-card"><div class="coup-code">REFERRAL15</div><div class="coup-info"><div class="coup-disc">15% OFF</div><div class="coup-meta">Referral program · Used 24x</div></div><span class="b bg">ACTIVE</span></div>
+        <div class="coup-card" style="opacity:.6"><div class="coup-code">NEWYR20</div><div class="coup-info"><div class="coup-disc">20% OFF</div><div class="coup-meta">New Year · Expired Jan 15</div></div><span class="b bc">EXPIRED</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Create New Coupon</div>
+      <div class="fr">
+        <div class="fg full"><label>Coupon Code</label><input placeholder="e.g. SUMMER30" style="font-family:'Space Mono',monospace;letter-spacing:.06em"></div>
+        <div class="fg"><label>Discount Type</label><select><option>Percentage %</option><option>Fixed Amount SAR</option></select></div>
+        <div class="fg"><label>Discount Value</label><input type="number" placeholder="20"></div>
+        <div class="fg full"><label>Apply To</label><select><option>All Courses</option><option>IELTS Prep Pro</option><option>English Business</option><option>Arabic Writing Pro</option></select></div>
+        <div class="fg"><label>Expiry Date</label><input type="date"></div>
+        <div class="fg"><label>Usage Limit</label><input type="number" placeholder="100"></div>
+        <div class="fg full"><label>Send to Audience</label><select><option>Hot Leads (42)</option><option>Cold Leads (98)</option><option>Negotiating (18)</option><option>All Leads</option></select></div>
+      </div>
+      <button class="btn btnp" style="width:100%;justify-content:center">Create & Send Offer 🎁</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     MARKETER — REFERRAL PROGRAM
+════════════════════════════════════════ -->
+<div class="pg" id="p-referral">
+  <div class="ph"><div><div class="pt">Referral Program</div><div class="ps">student referrals · track who referred whom · auto rewards</div></div></div>
+  <div class="srow s4">
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Total Referrals</div><div class="sv b">67</div></div><div class="sc-icon sc-ico-b">🔗</div></div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Converted</div><div class="sv g">24</div></div><div class="sc-icon sc-ico-g">✅</div></div><div class="sd up">36% referral conv.</div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Rewards Paid</div><div class="sv a">SAR 4.8K</div></div><div class="sc-icon sc-ico-y">🎁</div></div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Top Referrer</div><div class="sv g">Sara A.</div></div><div class="sc-icon sc-ico-t">🏆</div></div><div class="sd">7 referrals</div></div>
+  </div>
+  <div class="g2c">
+    <div class="card">
+      <div class="card-title">Referral Settings</div>
+      <div class="fr">
+        <div class="fg"><label>Referrer Reward (SAR)</label><input type="number" value="200"></div>
+        <div class="fg"><label>Referee Discount (%)</label><input type="number" value="15"></div>
+        <div class="fg full"><label>Reward Trigger</label><select><option>On Enrolment</option><option>On Payment</option><option>On Course Completion</option></select></div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px"><span style="font-size:12px;color:var(--tx2)">Auto-send reward via WhatsApp</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+      <button class="btn btnp" style="width:100%;justify-content:center">Save Referral Settings</button>
+    </div>
+    <div class="tw" style="margin-bottom:0">
+      <div class="th2"><span class="tt">Top Referrers</span></div>
+      <table><thead><tr><th>Student</th><th>Referrals</th><th>Converted</th><th>Earned</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td><div style="display:flex;align-items:center;gap:7px"><div class="lav" style="width:24px;height:24px;font-size:9px">SA</div>Sara Ahmed</div></td><td>7</td><td>4</td><td style="color:var(--yw);font-weight:600">SAR 800</td><td><span class="b bg">Paid</span></td></tr>
+        <tr><td><div style="display:flex;align-items:center;gap:7px"><div class="lav" style="width:24px;height:24px;font-size:9px;color:var(--bl)">LT</div>Layla Tarek</div></td><td>5</td><td>3</td><td style="color:var(--yw);font-weight:600">SAR 600</td><td><span class="b bg">Paid</span></td></tr>
+        <tr><td><div style="display:flex;align-items:center;gap:7px"><div class="lav" style="width:24px;height:24px;font-size:9px;color:var(--pu)">NM</div>Nora Mohammed</div></td><td>3</td><td>1</td><td style="color:var(--yw);font-weight:600">SAR 200</td><td><span class="b bp">Pending</span></td></tr>
+      </tbody></table>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     MARKETER — RE-ENGAGEMENT
+════════════════════════════════════════ -->
+<div class="pg" id="p-reengage">
+  <div class="ph"><div><div class="pt">Re-engagement Automations</div><div class="ps">cold leads · inactive students · auto-trigger sequences</div></div></div>
+  <div class="srow s3">
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Cold Leads</div><div class="sv r">98</div></div><div class="sc-icon sc-ico-r">❄️</div></div><div class="sd">score below 30</div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Inactive Students</div><div class="sv a">23</div></div><div class="sc-icon sc-ico-y">😴</div></div><div class="sd">5+ days no activity</div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Re-engaged This Month</div><div class="sv g">34</div></div><div class="sc-icon sc-ico-g">🔄</div></div><div class="sd up">12 converted after re-engage</div></div>
+  </div>
+  <div class="g2c">
+    <div class="card">
+      <div class="card-title">Active Automations</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="background:var(--bg3);border:1px solid var(--bor3);border-radius:8px;padding:13px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px"><span style="font-size:12px;font-weight:600;color:var(--tx)">❄️ Cold Lead Nurture</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+          <div style="font-size:11px;color:var(--tx2)">Trigger: Score &lt; 30 · Wait 7 days of silence</div>
+          <div style="font-size:11px;color:var(--tx2)">Sequence: Day 1 casual → Day 4 offer → Day 10 last chance</div>
+          <div style="margin-top:8px"><span class="b bc">98 in queue</span></div>
+        </div>
+        <div style="background:var(--bg3);border:1px solid rgba(245,197,66,.2);border-radius:8px;padding:13px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px"><span style="font-size:12px;font-weight:600;color:var(--tx)">😴 Inactive Student Nudge</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+          <div style="font-size:11px;color:var(--tx2)">Trigger: Student inactive for 5 days</div>
+          <div style="font-size:11px;color:var(--tx2)">Sends: "Hi {{name}}, your next lesson is waiting! 📚"</div>
+          <div style="margin-top:8px"><span class="b bp">23 triggered</span></div>
+        </div>
+        <div style="background:var(--bg3);border:1px solid var(--bor);border-radius:8px;padding:13px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px"><span style="font-size:12px;font-weight:600;color:var(--tx)">📞 24h No Reply Bot Follow-up</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+          <div style="font-size:11px;color:var(--tx2)">Trigger: Lead didn't reply to bot for 24h</div>
+          <div style="font-size:11px;color:var(--tx2)">Sends: "Still interested? We're here to help 😊"</div>
+          <div style="margin-top:8px"><span class="b bg">12 sent today</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Re-engagement Stats</div>
+      <div class="chart-box" style="height:200px"><canvas id="chartReengage"></canvas></div>
+      <div style="margin-top:13px">
+        <div class="card-title">Best Time to Message <span>Saudi Arabia</span></div>
+        <div class="pbw">
+          <div class="pbr"><span class="pbl">8–10 PM</span><div class="pbk"><div class="pbf pf-g" style="width:92%">92% reply</div></div></div>
+          <div class="pbr"><span class="pbl">6–8 PM</span><div class="pbk"><div class="pbf pf-b" style="width:74%">74% reply</div></div></div>
+          <div class="pbr"><span class="pbl">12–2 PM</span><div class="pbk"><div class="pbf pf-y" style="width:55%">55% reply</div></div></div>
+          <div class="pbr"><span class="pbl">9–11 AM</span><div class="pbk"><div class="pbf pf-p" style="width:38%">38% reply</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     MARKETER — A/B TESTING
+════════════════════════════════════════ -->
+<div class="pg" id="p-abtest">
+  <div class="ph"><div><div class="pt">A/B Message Testing</div><div class="ps">test two message versions · compare results · pick winner</div></div><button class="btn btnp bsm">+ New A/B Test</button></div>
+  <div class="g2c" style="margin-bottom:14px">
+    <div class="card">
+      <div class="card-title">Active Test — "Offer Framing" <span class="b bg">RUNNING</span></div>
+      <div style="font-size:11px;color:var(--tx2);margin-bottom:13px">Audience: 80 warm leads (split 50/50) · Started Mar 20</div>
+      <div class="ab-ver">
+        <div class="ab-label" style="color:var(--bl)">VERSION A — Control</div>
+        <div style="font-size:12px;color:var(--tx2);margin-bottom:10px;padding:9px;background:var(--bg4);border-radius:6px;line-height:1.6">"Hi {{name}}! Our IELTS Prep Pro is SAR 1,899. Enrol now and start your journey 📚"</div>
+        <div class="srow s3" style="margin-bottom:0">
+          <div style="text-align:center"><div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--tx3)">SENT</div><div style="font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:var(--bl)">40</div></div>
+          <div style="text-align:center"><div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--tx3)">OPENED</div><div style="font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:var(--yw)">61%</div></div>
+          <div style="text-align:center"><div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--tx3)">REPLIED</div><div style="font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:var(--g2)">18%</div></div>
+        </div>
+      </div>
+      <div class="ab-ver" style="border-color:var(--bor3)">
+        <div class="ab-label" style="color:var(--g2)">VERSION B — Scarcity Frame 🏆 WINNING</div>
+        <div style="font-size:12px;color:var(--tx2);margin-bottom:10px;padding:9px;background:var(--bg4);border-radius:6px;line-height:1.6">"Hi {{name}}! Only 5 seats left for IELTS Prep Pro this month. SAR 1,899 — grab your spot before it's gone! ⏰"</div>
+        <div class="srow s3" style="margin-bottom:0">
+          <div style="text-align:center"><div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--tx3)">SENT</div><div style="font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:var(--bl)">40</div></div>
+          <div style="text-align:center"><div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--tx3)">OPENED</div><div style="font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:var(--yw)">78%</div></div>
+          <div style="text-align:center"><div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--tx3)">REPLIED</div><div style="font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:var(--g2)">34%</div></div>
+        </div>
+      </div>
+      <button class="btn btnp" style="width:100%;justify-content:center;margin-top:10px">🏆 Use Version B for All</button>
+    </div>
+    <div class="card">
+      <div class="card-title">A/B Test History</div>
+      <div class="tw" style="margin-bottom:0;border:none">
+        <table><thead><tr><th>Test</th><th>Winner</th><th>Improvement</th></tr></thead>
+        <tbody>
+          <tr><td>Emoji vs No Emoji</td><td><span class="b bg">With Emoji</span></td><td style="color:var(--g2);font-weight:600">+23% reply rate</td></tr>
+          <tr><td>Price First vs Last</td><td><span class="b bg">Price Last</span></td><td style="color:var(--g2);font-weight:600">+17% conversion</td></tr>
+          <tr><td>AM vs PM Send</td><td><span class="b bg">8 PM Send</span></td><td style="color:var(--g2);font-weight:600">+41% open rate</td></tr>
+          <tr><td>Arabic vs English</td><td><span class="b bg">Arabic First</span></td><td style="color:var(--g2);font-weight:600">+31% reply rate</td></tr>
+        </tbody></table>
+      </div>
+      <div style="margin-top:13px">
+        <div class="card-title">Create New A/B Test</div>
+        <div class="fr">
+          <div class="fg full"><label>Test Name</label><input placeholder="e.g. Urgency vs Value Framing"></div>
+          <div class="fg full"><label>Audience</label><select><option>Warm Leads (89)</option><option>Cold Leads (98)</option><option>Hot Leads (42)</option></select></div>
+          <div class="fg full"><label>Version A Message</label><textarea rows="2" placeholder="Control message..."></textarea></div>
+          <div class="fg full"><label>Version B Message</label><textarea rows="2" placeholder="Variant message..."></textarea></div>
+        </div>
+        <button class="btn btnp" style="width:100%;justify-content:center">Start A/B Test</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     MARKETER — FUNNEL VIEW
+════════════════════════════════════════ -->
+<div class="pg" id="p-funnel">
+  <div class="ph"><div><div class="pt">Funnel Analytics</div><div class="ps">lead journey · drop-off points · conversion flow</div></div></div>
+  <div class="g2c">
+    <div class="card">
+      <div class="card-title">Conversion Funnel — This Month</div>
+      <div class="funnel-item" style="background:rgba(91,156,246,.06)"><span style="font-size:16px">📥</span><div class="fi-label" style="color:var(--bl)">NEW LEADS</div><div class="fi-bar-wrap"><div class="fi-bar" style="width:100%;background:var(--bl)"></div></div><div class="fi-count" style="color:var(--bl)">287</div></div>
+      <div class="funnel-item" style="background:rgba(177,151,252,.06)"><span style="font-size:16px">🤖</span><div class="fi-label" style="color:var(--pu)">BOT QUALIFIED</div><div class="fi-bar-wrap"><div class="fi-bar" style="width:72%;background:var(--pu)"></div></div><div class="fi-count" style="color:var(--pu)">206</div></div>
+      <div class="funnel-item" style="background:rgba(245,197,66,.06)"><span style="font-size:16px">🔥</span><div class="fi-label" style="color:var(--yw)">HOT LEADS</div><div class="fi-bar-wrap"><div class="fi-bar" style="width:38%;background:var(--yw)"></div></div><div class="fi-count" style="color:var(--yw)">42</div></div>
+      <div class="funnel-item" style="background:rgba(255,107,107,.06)"><span style="font-size:16px">💬</span><div class="fi-label" style="color:var(--re)">MARKETER CONTACT</div><div class="fi-bar-wrap"><div class="fi-bar" style="width:28%;background:var(--re)"></div></div><div class="fi-count" style="color:var(--re)">31</div></div>
+      <div class="funnel-item" style="background:rgba(22,167,107,.06)"><span style="font-size:16px">✅</span><div class="fi-label" style="color:var(--g2)">ENROLLED</div><div class="fi-bar-wrap"><div class="fi-bar" style="width:31%;background:var(--g)"></div></div><div class="fi-count" style="color:var(--g2)">89</div></div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-title">Funnel Trend — 4 Weeks</div>
+        <div class="chart-box" style="height:160px"><canvas id="chartFunnelTrend"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Marketer Performance</div>
+        <div class="perf-row"><div class="perf-rank">🥇</div><div class="perf-av" style="color:var(--pu)">LT</div><div class="perf-info"><div class="perf-name">Layla Tarek</div><div class="perf-meta">42 leads · 18 converted · 4m avg response</div></div><div class="perf-num">43%</div></div>
+        <div class="perf-row"><div class="perf-rank">🥈</div><div class="perf-av" style="color:var(--bl)">AM</div><div class="perf-info"><div class="perf-name">Ahmad Mansour</div><div class="perf-meta">38 leads · 12 converted · 11m avg response</div></div><div class="perf-num">32%</div></div>
+        <div class="perf-row"><div class="perf-rank">🥉</div><div class="perf-av" style="color:var(--te)">RK</div><div class="perf-info"><div class="perf-name">Reem Khalid</div><div class="perf-meta">29 leads · 8 converted · 19m avg response</div></div><div class="perf-num">28%</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     ACCOUNTS
+════════════════════════════════════════ -->
+<div class="pg" id="p-accounts">
+  <div class="ph">
+    <div><div class="pt">Accounts & Finance</div><div class="ps">invoices · payments · revenue · overdue tracking</div></div>
+    <button class="btn btnp bsm" onclick="stab2('a-newinv')">+ New Invoice</button>
+  </div>
+  <div class="srow s4">
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Revenue (March)</div><div class="sv g">SAR 84K</div></div><div class="sc-icon sc-ico-g">💰</div></div><div class="sd up">↑ 18% vs Feb</div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Invoices Sent</div><div class="sv b">134</div></div><div class="sc-icon sc-ico-b">📄</div></div><div class="sd">12 pending</div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Overdue</div><div class="sv r">7</div></div><div class="sc-icon sc-ico-r">⚠️</div></div><div class="sd dn">SAR 9,200 at risk</div></div>
+    <div class="sc"><div class="sc-top"><div><div class="sl2">Collection Rate</div><div class="sv g">88%</div></div><div class="sc-icon sc-ico-t">📊</div></div><div class="sd up">SAR 74K collected</div></div>
+  </div>
+
+  <div class="g2c" style="margin-bottom:14px">
+    <div class="card">
+      <div class="card-title">Monthly Revenue — 2026</div>
+      <div class="chart-box" style="height:160px"><canvas id="chartMonthlyRev"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Payment Status Breakdown</div>
+      <div class="chart-box" style="height:160px"><canvas id="chartPayStatus"></canvas></div>
+    </div>
+  </div>
+
+  <div class="tabs" id="acctabs">
+    <div class="tab on" id="a-tab-inv" onclick="stab2('a-inv')">Invoices</div>
+    <div class="tab" id="a-tab-newinv" onclick="stab2('a-newinv')">Create Invoice</div>
+  </div>
+
+  <div id="a-inv">
+    <div class="alert alert-r">⚠ 7 invoices are overdue. Total at risk: SAR 9,200. <button class="btn btnwa bxs" style="margin-left:8px">Send All Reminders</button></div>
+    <div class="tw"><div class="th2"><span class="tt">Invoice Log</span><div class="ta"><select style="font-size:11px"><option>All Status</option><option>Paid</option><option>Pending</option><option>Overdue</option></select></div></div>
+    <table><thead><tr><th>Invoice</th><th>Student</th><th>Course</th><th>Amount</th><th>Date</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+      <tr><td style="font-family:'Space Mono',monospace;font-size:10px;color:var(--g2)">#INV-2025</td><td>Sara Ahmed</td><td>English Business</td><td>SAR 1,499</td><td style="color:var(--tx3);font-size:11px">Mar 24</td><td><span class="b bg">PAID</span></td><td><button class="btn btng bsm">PDF</button></td></tr>
+      <tr><td style="font-family:'Space Mono',monospace;font-size:10px;color:var(--tx2)">#INV-2024</td><td>Yousef Al-Rashidi</td><td>IELTS Prep</td><td>SAR 1,899</td><td style="color:var(--tx3);font-size:11px">Mar 18</td><td><span class="b bp">PENDING</span></td><td><button class="btn btng bsm">Remind</button></td></tr>
+      <tr><td style="font-family:'Space Mono',monospace;font-size:10px;color:var(--g2)">#INV-2023</td><td>Layla Tarek</td><td>Arabic Writing</td><td>SAR 999</td><td style="color:var(--tx3);font-size:11px">Mar 15</td><td><span class="b bg">PAID</span></td><td><button class="btn btng bsm">PDF</button></td></tr>
+      <tr><td style="font-family:'Space Mono',monospace;font-size:10px;color:var(--re)">#INV-2022</td><td>Ahmed Rashid</td><td>English Business</td><td>SAR 1,499</td><td style="color:var(--tx3);font-size:11px">Mar 10</td><td><span class="b br">OVERDUE</span></td><td><button class="btn btnwa bsm">📲 WA Remind</button></td></tr>
+    </tbody></table></div>
+  </div>
+
+  <div id="a-newinv" style="display:none">
+    <div class="g2c">
+      <div class="inv-doc">
+        <div class="inv-head"><div><div class="inv-logo">FORLINGO</div><div style="font-size:10px;color:var(--tx2);margin-top:3px;font-family:'Space Mono',monospace">forlingo.academy</div></div><div style="text-align:right"><div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--tx2)">#INV-2026</div><div style="font-size:10px;color:var(--tx2);margin-top:3px">March 25, 2026</div></div></div>
+        <div style="margin-bottom:14px"><div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--tx3);margin-bottom:4px">BILLED TO</div><div style="font-weight:600">Student Name</div><div style="font-size:11px;color:var(--tx2)">student@email.com</div></div>
+        <div class="inv-row"><span>IELTS Preparation Pro Course</span><span>SAR 1,899</span></div>
+        <div class="inv-row" style="color:var(--tx2)"><span>Full access · 3 months</span><span></span></div>
+        <div class="inv-row" style="color:var(--tx2)"><span>VAT 15%</span><span>SAR 284.85</span></div>
+        <div class="inv-total"><span>Total Due</span><span style="color:var(--g2)">SAR 2,183.85</span></div>
+        <div style="display:flex;gap:8px;margin-top:14px">
+          <button class="btn btnwa bsm" style="flex:1;justify-content:center">📲 Send via WA</button>
+          <button class="btn btng bsm" style="flex:1;justify-content:center">⬇ PDF</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Generate Invoice</div>
+        <div class="fr">
+          <div class="fg full"><label>Student</label><select><option>Sara Ahmed</option><option>Yousef Al-Rashidi</option><option>Layla Tarek</option></select></div>
+          <div class="fg full"><label>Course</label><select><option>English Business — SAR 1,499</option><option>IELTS Prep Pro — SAR 1,899</option><option>Formal Arabic — SAR 999</option></select></div>
+          <div class="fg"><label>Discount (%)</label><input type="number" value="0"></div>
+          <div class="fg"><label>Payment Terms</label><select><option>Due Immediately</option><option>Net 7</option><option>Net 30</option><option>Instalment Plan</option></select></div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><span style="font-size:12px;color:var(--tx2)">Auto WA reminder if unpaid after 3 days</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+        <button class="btn btnp" style="width:100%;justify-content:center">Generate & Send Invoice</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end content -->
+</div><!-- end main -->
+
+<!-- ══════════ MODALS ══════════ -->
+<div class="mo" id="minvite" onclick="if(event.target===this)hM('minvite')">
+  <div class="mdl">
+    <div class="mt2">👤 Invite New User</div>
+    <div class="fr">
+      <div class="fg"><label>Full Name</label><input placeholder="Ahmed Al-Malki"></div>
+      <div class="fg"><label>Email</label><input placeholder="ahmed@email.com" type="email"></div>
+      <div class="fg"><label>WhatsApp Number</label><input placeholder="+966 5x xxx xxxx"></div>
+      <div class="fg"><label>Assign Role</label><select><option>Student</option><option>Teacher</option><option>Marketer</option><option>Accounts</option><option>Admin</option></select></div>
+    </div>
+    <div class="mf"><button class="btn btng" onclick="hM('minvite')">Cancel</button><button class="btn btnp">Send Invite 📲</button></div>
+  </div>
+</div>
+
+<div class="mo" id="mlead" onclick="if(event.target===this)hM('mlead')">
+  <div class="mdl">
+    <div class="mt2">➕ Add Lead Manually</div>
+    <div class="fr">
+      <div class="fg"><label>Full Name</label><input placeholder="Lead name"></div>
+      <div class="fg"><label>WhatsApp Number</label><input placeholder="+966 5x xxx xxxx"></div>
+      <div class="fg"><label>Course Interest</label><select><option>English Business</option><option>IELTS Prep</option><option>Arabic Writing</option><option>French</option></select></div>
+      <div class="fg"><label>Initial Score</label><input type="number" placeholder="50" min="0" max="100"></div>
+      <div class="fg full"><label>Notes</label><textarea rows="2" placeholder="Any notes about this lead..."></textarea></div>
+    </div>
+    <div class="mf"><button class="btn btng" onclick="hM('mlead')">Cancel</button><button class="btn btnp">Add Lead</button></div>
+  </div>
+</div>
+
+<div class="mo" id="mcourse" onclick="if(event.target===this)hM('mcourse')">
+  <div class="mdl">
+    <div class="mt2">📚 Create New Course</div>
+    <div class="fr">
+      <div class="fg full"><label>Course Title</label><input placeholder="e.g. Advanced IELTS Preparation"></div>
+      <div class="fg"><label>Language</label><select><option>English</option><option>Arabic</option><option>French</option><option>Spanish</option></select></div>
+      <div class="fg"><label>Level</label><select><option>Beginner</option><option>Intermediate</option><option>Advanced</option><option>All Levels</option></select></div>
+      <div class="fg"><label>Price (SAR)</label><input type="number" placeholder="1499"></div>
+      <div class="fg"><label>Duration (weeks)</label><input type="number" placeholder="12"></div>
+      <div class="fg full"><label>Assigned Teacher</label><select><option>Dr. Mohammed K.</option><option>Sara L.</option><option>Ahmed R.</option></select></div>
+      <div class="fg full"><label>Description</label><textarea rows="2" placeholder="Brief course overview..."></textarea></div>
+    </div>
+    <div class="mf"><button class="btn btng" onclick="hM('mcourse')">Cancel</button><button class="btn btnp">Create Course</button></div>
+  </div>
+</div>
+
+<style>
+.mc-quick-btn{background:var(--bg4);border:1px solid var(--bor2);border-radius:5px;padding:4px 9px;font-size:10px;cursor:pointer;color:var(--tx2);transition:all .15s;white-space:nowrap;}
+.mc-quick-btn:hover{border-color:var(--g);color:var(--g);background:var(--gdim);}
+</style>
+
+<script>
+// ══ ROLES CONFIG ══
+const ROLES = {
+  admin:{tag:'ADMIN PORTAL',av:'AD',name:'Admin',
+    nav:[
+      {s:'PLATFORM'},{i:'⬡',l:'Dashboard',p:'p-dash'},{i:'👥',l:'User Roles',p:'p-roles'},{i:'📚',l:'All Courses',p:'p-allcourses'},
+      {s:'SYSTEM'},{i:'📋',l:'Activity Log',p:'p-dash'},
+    ]},
+  student:{tag:'STUDENT PORTAL',av:'SA',name:'Sara Ahmed',
+    nav:[
+      {s:'LEARNING'},{i:'🏠',l:'My Dashboard',p:'p-student'},{i:'📖',l:'My Courses',p:'p-student'},{i:'📅',l:'Live Sessions',p:'p-student'},{i:'🏆',l:'Certificates',p:'p-student'},
+      {s:'ACCOUNT'},{i:'👤',l:'Profile',p:'p-student'},{i:'💳',l:'Payments',p:'p-accounts'},
+    ]},
+  teacher:{tag:'TEACHER PORTAL',av:'MK',name:'Dr. Mohammed K.',
+    nav:[
+      {s:'STUDIO'},{i:'📊',l:'Overview',p:'p-teacher'},{i:'📚',l:'My Courses',p:'p-teacher'},{i:'⬆',l:'Upload Content',p:'p-teacher'},{i:'👥',l:'Students',p:'p-teacher'},{i:'📝',l:'Quiz Builder',p:'p-teacher'},{i:'📈',l:'Analytics',p:'p-teacher'},
+    ]},
+  marketer:{tag:'MARKETER PORTAL',av:'LT',name:'Layla Tarek',
+    nav:[
+      {s:'CRM'},{i:'📊',l:'Lead Dashboard',p:'p-leads'},{i:'📥',l:'WA Inbox',p:'p-inbox',n:'12'},{i:'📉',l:'Funnel View',p:'p-funnel'},{i:'🎯',l:'Lead Scoring',p:'p-scoring'},
+      {s:'CAMPAIGNS'},{i:'📣',l:'Campaign Builder',p:'p-campaign'},{i:'📤',l:'Bulk Broadcast',p:'p-bulk',n:'3'},{i:'🔄',l:'A/B Testing',p:'p-abtest'},
+      {s:'AUTOMATION'},{i:'🤖',l:'Bot Automation',p:'p-bot'},{i:'💤',l:'Re-engagement',p:'p-reengage'},
+      {s:'GROWTH'},{i:'💰',l:'ROI Tracker',p:'p-roi'},{i:'🎁',l:'Offers & Coupons',p:'p-offers'},{i:'🔗',l:'Referral Program',p:'p-referral'},
+    ]},
+  accounts:{tag:'ACCOUNTS PORTAL',av:'HA',name:'Hana Al-Sayed',
+    nav:[
+      {s:'FINANCE'},{i:'💰',l:'Overview',p:'p-accounts'},{i:'📄',l:'Invoices',p:'p-accounts'},{i:'✏️',l:'Create Invoice',p:'p-accounts'},{i:'⚠️',l:'Overdue',p:'p-accounts',n:'7'},
+      {s:'REPORTS'},{i:'📈',l:'Monthly Report',p:'p-accounts'},
+    ]}
+};
+
+let curRole='admin';
+let chartsInitialized={};
+
+function setRole(r,el){
+  curRole=r;
+  document.querySelectorAll('.rbtn').forEach(b=>b.classList.remove('on'));
+  if(el) el.classList.add('on');
+  const d=ROLES[r];
+  document.getElementById('ptag').textContent=d.tag;
+  document.getElementById('uav').textContent=d.av;
+  document.getElementById('uname').textContent=d.name;
+  buildSB(r);
+  const firstP=d.nav.find(x=>x.p);
+  if(firstP) gP(firstP.p);
+}
+
+function buildSB(r){
+  const sb=document.getElementById('sbel');
+  sb.innerHTML='';
+  ROLES[r].nav.forEach(item=>{
+    if(item.s){
+      const d=document.createElement('div');
+      d.className='ss';
+      d.innerHTML=`<div class="sl">${item.s}</div>`;
+      sb.appendChild(d);
+    } else {
+      const d=document.createElement('div');
+      d.className='ni';
+      d.innerHTML=`<span class="ic">${item.i}</span>${item.l}${item.n?`<span class="nb">${item.n}</span>`:''}`;
+      d.onclick=()=>{gP(item.p);document.querySelectorAll('.ni').forEach(x=>x.classList.remove('on'));d.classList.add('on');};
+      sb.appendChild(d);
+    }
+  });
+}
+
+function gP(id){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  const el=document.getElementById(id);
+  if(el){el.classList.add('on');initChartsForPage(id);}
+  document.querySelectorAll('.ni').forEach(n=>{
+    if(n.onclick&&n.onclick.toString().includes(id)) n.classList.add('on');
+  });
+}
+
+function showM(id){document.getElementById(id).classList.add('on');}
+function hM(id){document.getElementById(id).classList.remove('on');}
+
+// ══ TABS ══
+function stab(el,id){
+  el.closest('.pg').querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  ['t-courses','t-upload','t-students','t-quiz','t-analytics'].forEach(i=>{const e=document.getElementById(i);if(e)e.style.display=i===id?'block':'none';});
+  if(id==='t-analytics') initChartsForPage('t-analytics');
+}
+
+function stab2(id){
+  ['a-inv','a-newinv'].forEach(i=>{const e=document.getElementById(i);if(e)e.style.display='none';});
+  const el=document.getElementById(id);if(el)el.style.display='block';
+  document.querySelectorAll('#acctabs .tab').forEach((t,i)=>{t.classList.remove('on');if((i===0&&id==='a-inv')||(i===1&&id==='a-newinv'))t.classList.add('on');});
+}
+
+// ══ SEARCH ══
+function showSearch(){document.getElementById('srchResults').classList.add('open');}
+function hideSearch(){document.getElementById('srchResults').classList.remove('open');}
+function handleSearch(v){if(v.length>1)showSearch();else hideSearch();}
+
+// ══ NOTIFICATIONS ══
+function toggleNotif(){document.getElementById('notifPanel').classList.toggle('open');}
+document.addEventListener('click',e=>{if(!e.target.closest('.bell-wrap'))document.getElementById('notifPanel').classList.remove('open');if(!e.target.closest('.srch-wrap'))hideSearch();});
+
+// ══ BOT CHAT ══
+const botReplies=['Great! What level is your English currently?','Got it! When are you looking to start?','And your approximate budget for the course?','Perfect! Our advisor will contact you within the hour. 🎯'];
+let bStep=0;
+function sBotMsg(){
+  const inp=document.getElementById('botInput');
+  const chat=document.getElementById('botChat');
+  if(!inp.value.trim())return;
+  const um=document.createElement('div');
+  um.className='wb wo';
+  um.innerHTML=inp.value+'<div class="wt">LEAD · just now</div>';
+  chat.appendChild(um);
+  inp.value='';
+  setTimeout(()=>{
+    const bm=document.createElement('div');
+    bm.className='wb wi';
+    bm.innerHTML=(botReplies[bStep%botReplies.length])+'<div class="wt">BOT · just now</div>';
+    chat.appendChild(bm);
+    bStep++;
+    chat.scrollTop=chat.scrollHeight;
+  },600);
+  chat.scrollTop=chat.scrollHeight;
+}
+
+// ══ INBOX CHAT ══
+function selectChat(el,name,av,status){
+  document.querySelectorAll('.inbox-item').forEach(i=>i.classList.remove('active'));
+  el.classList.add('active');
+  el.classList.remove('unread');
+  document.getElementById('chatName').textContent=name;
+  document.getElementById('chatAvatar').textContent=av;
+  const statusMap={HOT:'🔥 HOT LEAD · Score 87/100',WARM:'🌡️ WARM LEAD · Score 65/100',NEGOT:'💰 NEGOTIATING · Instalment request',COLD:'❄️ COLD LEAD · Score 23/100'};
+  document.getElementById('chatStatus').textContent=statusMap[status]||status;
+}
+function fillInboxMsg(t){document.getElementById('inboxInput').value=t;}
+function sendInboxMsg(){
+  const inp=document.getElementById('inboxInput');
+  const msgs=document.getElementById('inboxChatMsgs');
+  if(!inp.value.trim())return;
+  const m=document.createElement('div');
+  m.className='wb wo';
+  m.innerHTML=inp.value+'<div class="wt">You · just now</div>';
+  msgs.appendChild(m);
+  inp.value='';
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+// ══ WA TEMPLATES ══
+const waTpl={
+  reminder:'Hi {{name}}! 📅 Your {{course}} class is tomorrow at 7PM. See you there!',
+  offer:'Hi {{name}}! 🎁 Special Ramadan offer: 20% off all courses this week only. Use code RAMADAN20!',
+  followup:'Hi {{name}}! 👋 Just checking in — are you still interested in joining {{course}}? We\'d love to have you!',
+  cert:'Congratulations {{name}}! 🏆 Your {{course}} certificate is ready. Download it here: forlingo.sa/certs',
+  reengage:'Hi {{name}}! 😊 We noticed it\'s been a while. Here\'s a special 10% discount to come back: COMEBACK10'
+};
+function fillWA(t){document.getElementById('wamsg').value=waTpl[t]||'';}
+
+// ══ CHARTS ══
+const chartDefaults={
+  responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{labels:{color:'#608070',font:{size:10,family:'Space Mono'},boxWidth:10,padding:10}},tooltip:{backgroundColor:'#1a2420',titleColor:'#cce8d8',bodyColor:'#608070',borderColor:'rgba(22,167,107,0.3)',borderWidth:1}},
+  scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#3a5448',font:{size:10}}},y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#3a5448',font:{size:10}}}}
+};
+
+function mkChart(id,type,data,opts={}){
+  if(chartsInitialized[id])return;
+  const el=document.getElementById(id);
+  if(!el)return;
+  chartsInitialized[id]=true;
+  new Chart(el,{type,data,options:{...chartDefaults,...opts}});
+}
+
+function initChartsForPage(pageId){
+  if(pageId==='p-dash'){
+    mkChart('chartRevenue','bar',{labels:['Oct','Nov','Dec','Jan','Feb','Mar'],datasets:[{label:'Revenue (SAR K)',data:[68,72,95,88,114,142],backgroundColor:'rgba(22,167,107,0.6)',borderColor:'#16a76b',borderWidth:1,borderRadius:4}]});
+    mkChart('chartEnrol','doughnut',{labels:['English Biz','IELTS Prep','Arabic Pro','French 101'],datasets:[{data:[148,96,68,34],backgroundColor:['rgba(22,167,107,0.7)','rgba(177,151,252,0.7)','rgba(91,156,246,0.7)','rgba(52,217,195,0.7)'],borderWidth:0}]},{plugins:{legend:{position:'right',labels:{color:'#608070',font:{size:10,family:'Space Mono'},boxWidth:8,padding:8}}}});
+    mkChart('chartFunnel','bar',{labels:['New','Qualified','Hot','Contacted','Enrolled'],datasets:[{label:'Leads',data:[287,206,42,31,89],backgroundColor:['rgba(91,156,246,0.6)','rgba(177,151,252,0.6)','rgba(255,107,107,0.6)','rgba(245,197,66,0.6)','rgba(22,167,107,0.7)'],borderRadius:4}]});
+  }
+  if(pageId==='p-roles'){
+    mkChart('chartRoles','doughnut',{labels:['Students','Teachers','Marketers','Accounts','Admins'],datasets:[{data:[312,8,5,3,2],backgroundColor:['rgba(22,167,107,0.7)','rgba(91,156,246,0.7)','rgba(177,151,252,0.7)','rgba(52,217,195,0.7)','rgba(245,197,66,0.7)'],borderWidth:0}]},{plugins:{legend:{position:'right',labels:{color:'#608070',font:{size:10},boxWidth:8,padding:6}}}});
+  }
+  if(pageId==='p-student'){
+    mkChart('chartStudentProg','radar',{labels:['Grammar','Vocabulary','Speaking','Writing','Listening','Reading'],datasets:[{label:'Sara Ahmed',data:[84,79,70,88,75,82],backgroundColor:'rgba(22,167,107,0.2)',borderColor:'#16a76b',pointBackgroundColor:'#12c77e',pointRadius:3}]},{scales:{r:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#3a5448',font:{size:9}},pointLabels:{color:'#608070',font:{size:10}}}}});
+    mkChart('chartStudentActivity','bar',{labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],datasets:[{label:'Minutes Studied',data:[45,60,30,90,20,75,55],backgroundColor:'rgba(22,167,107,0.5)',borderRadius:4}]});
+  }
+  if(pageId==='p-teacher'||pageId==='t-analytics'){
+    mkChart('chartTeacherEngagement','line',{labels:['Wk1','Wk2','Wk3','Wk4'],datasets:[{label:'English Biz',data:[78,82,80,85],borderColor:'#16a76b',backgroundColor:'rgba(22,167,107,0.1)',tension:0.4,fill:true,pointRadius:3},{label:'Arabic Pro',data:[65,70,68,72],borderColor:'#b197fc',backgroundColor:'rgba(177,151,252,0.1)',tension:0.4,fill:true,pointRadius:3}]});
+    mkChart('chartQuizScores','bar',{labels:['<50%','50-60%','60-70%','70-80%','80-90%','90%+'],datasets:[{label:'Students',data:[4,8,22,45,38,18],backgroundColor:'rgba(22,167,107,0.6)',borderRadius:4}]});
+    mkChart('chartCompletion','line',{labels:['Jan','Feb','Mar'],datasets:[{label:'Completion Rate',data:[58,65,71],borderColor:'#12c77e',backgroundColor:'rgba(22,167,107,0.15)',tension:0.4,fill:true,pointRadius:4,pointBackgroundColor:'#12c77e'}]});
+  }
+  if(pageId==='p-leads'){
+    mkChart('chartLeadVolume','bar',{labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],datasets:[{label:'Leads',data:[34,41,28,52,38,47,47],backgroundColor:'rgba(91,156,246,0.6)',borderRadius:4},{label:'Converted',data:[8,12,7,18,11,16,17],backgroundColor:'rgba(22,167,107,0.6)',borderRadius:4}]});
+    mkChart('chartConvByCourse','doughnut',{labels:['IELTS Prep','English Biz','Arabic Pro','French 101'],datasets:[{data:[38,31,20,0],backgroundColor:['rgba(177,151,252,0.7)','rgba(22,167,107,0.7)','rgba(91,156,246,0.7)','rgba(52,217,195,0.5)'],borderWidth:0}]},{plugins:{legend:{position:'right',labels:{color:'#608070',font:{size:10},boxWidth:8,padding:6}}}});
+  }
+  if(pageId==='p-bot'){
+    mkChart('chartLeadScore','bar',{labels:['0-20','21-40','41-60','61-80','81-100'],datasets:[{label:'Leads',data:[21,45,68,89,64],backgroundColor:['rgba(255,107,107,0.5)','rgba(255,159,67,0.5)','rgba(245,197,66,0.5)','rgba(22,167,107,0.5)','rgba(22,167,107,0.8)'],borderRadius:4}]});
+  }
+  if(pageId==='p-scoring'){
+    mkChart('chartScoreDist','bar',{labels:['0-20','21-40','41-60','61-80','81-100'],datasets:[{label:'Leads',data:[21,45,68,89,64],backgroundColor:'rgba(22,167,107,0.6)',borderRadius:4}]});
+  }
+  if(pageId==='p-roi'){
+    mkChart('chartROI','bar',{labels:['WA Campaign IELTS','WA Campaign Arabic','WA Campaign English','Referral'],datasets:[{label:'Revenue (SAR K)',data:[28.5,18.2,13.5,7.2],backgroundColor:'rgba(22,167,107,0.7)',borderRadius:4},{label:'Spend (SAR K)',data:[2.1,1.8,2.4,0.8],backgroundColor:'rgba(255,107,107,0.6)',borderRadius:4}]});
+    mkChart('chartROAS','horizontalBar'||'bar',{labels:['WA IELTS','Referral','WA Arabic','WA English'],datasets:[{label:'ROAS',data:[13.6,9.0,10.1,5.6],backgroundColor:['rgba(22,167,107,0.8)','rgba(22,167,107,0.7)','rgba(22,167,107,0.6)','rgba(245,197,66,0.6)'],borderRadius:4}]},{indexAxis:'y'});
+  }
+  if(pageId==='p-funnel'){
+    mkChart('chartFunnelTrend','line',{labels:['Wk1','Wk2','Wk3','Wk4'],datasets:[{label:'New Leads',data:[62,74,71,80],borderColor:'#5b9cf6',tension:0.4,fill:false,pointRadius:3},{label:'Enrolled',data:[18,24,22,25],borderColor:'#16a76b',tension:0.4,fill:false,pointRadius:3}]});
+  }
+  if(pageId==='p-reengage'){
+    mkChart('chartReengage','bar',{labels:['Wk1','Wk2','Wk3','Wk4'],datasets:[{label:'Re-engaged',data:[8,11,7,8],backgroundColor:'rgba(91,156,246,0.6)',borderRadius:4},{label:'Converted',data:[2,4,3,3],backgroundColor:'rgba(22,167,107,0.7)',borderRadius:4}]});
+  }
+  if(pageId==='p-accounts'){
+    mkChart('chartMonthlyRev','line',{labels:['Oct','Nov','Dec','Jan','Feb','Mar'],datasets:[{label:'Revenue (SAR K)',data:[58,65,89,72,71,84],borderColor:'#12c77e',backgroundColor:'rgba(22,167,107,0.15)',tension:0.4,fill:true,pointRadius:4,pointBackgroundColor:'#12c77e'}]});
+    mkChart('chartPayStatus','doughnut',{labels:['Paid','Pending','Overdue'],datasets:[{data:[115,12,7],backgroundColor:['rgba(22,167,107,0.7)','rgba(245,197,66,0.7)','rgba(255,107,107,0.7)'],borderWidth:0}]},{plugins:{legend:{position:'right',labels:{color:'#608070',font:{size:10},boxWidth:8,padding:6}}}});
+  }
+}
+
+// ══ TEACHER TAB INIT ══
+function stabt(el,id){
+  el.closest('#t-courses').closest('.pg').querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+}
+
+// ══ INIT ══
+window.addEventListener('load',()=>{
+  setRole('admin',document.querySelector('.rbtn.on'));
+  setTimeout(()=>initChartsForPage('p-dash'),100);
+});
+</script>
+</body>
+</html>
